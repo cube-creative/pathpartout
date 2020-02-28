@@ -5,4 +5,3 @@
 - Edit `setup.py`
 - Rename the main package folder
 - Code as beautifully as you can
-- 
