@@ -3,9 +3,9 @@ from codecs import open
 from setuptools import setup, find_packages
 
 
-NAME = 
+NAME = 'XXXXXXXXXXX'
 VERSION = '0.0.0'
-DESCRIPTION = 
+DESCRIPTION = 'XXXXXXXXXXX'
 AUTHOR = 'Cube Creative'
 AUTHOR_EMAIL = 'development@cube-creative.com'
 

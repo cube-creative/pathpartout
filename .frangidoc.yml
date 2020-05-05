@@ -1,0 +1,5 @@
+title: XXXXXXXXXXX
+exclude:
+  - setup.py
+  - XXXXXXXXXXX/__init__.py
+
