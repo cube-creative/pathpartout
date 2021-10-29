@@ -1,5 +1,5 @@
 title: Template - Pip installable
 exclude:
   - setup.py
-  - rename_me/__init__.py
+  - pathpartout/__init__.py
 
