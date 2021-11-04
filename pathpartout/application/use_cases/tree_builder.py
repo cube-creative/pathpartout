@@ -1,12 +1,8 @@
-import os
 from pathpartout.application.entities import TreeArchitecture, ConceptualPath
 from pathpartout.application.use_cases import config_path_finder, config_reader
 
 
 def build_from_label(tree_presenter, label, filepath):
-    if not os.path.exists(filepath):
-        raise ValueError("Given filepath doesn't correspond to real file.")
-
     config_filepath = config_path_finder.find_from_filepath(filepath)
     if not config_filepath:
         raise ValueError("Given filepath doesn't have associate config file.")
