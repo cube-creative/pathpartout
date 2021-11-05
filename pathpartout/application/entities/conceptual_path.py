@@ -51,7 +51,7 @@ class ConceptualPath:
 
         concept_path = "/".join(self.path_elements)
         variables_found = variable_pattern.findall(concept_path)
-        missing_variables = [var for var in variables_found if not info.get(var)]
+        missing_variables = set([var for var in variables_found if not info.get(var)])
         if missing_variables:
             raise ValueError(f"Missing info to found label path : {','.join(missing_variables)}")
 

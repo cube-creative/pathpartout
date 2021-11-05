@@ -1,2 +1,2 @@
-from .api import config, tree_path
+from .api import config, tree
 
