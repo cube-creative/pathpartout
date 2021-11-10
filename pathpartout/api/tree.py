@@ -14,6 +14,7 @@ def get_from_label(label_name, filepath):
 
     Returns:
         TreePath corresponding to the config file found and the given information.
+
     """
     tree_path_presenter = TreePathPresenter()
     tree_builder.build_from_label(tree_path_presenter, label_name, filepath)
@@ -28,6 +29,7 @@ def get_from_shot_working_filepath(filepath):
 
     Returns:
         TreePath corresponding to the config file found and the given filepath.
+
     """
     tree_path_presenter = TreePathPresenter()
     tree_builder.build_from_label(tree_path_presenter, "shot_working_file", filepath)
