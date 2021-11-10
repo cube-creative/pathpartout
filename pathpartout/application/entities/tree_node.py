@@ -2,10 +2,11 @@ from . import Label, ConceptualPath
 
 
 class TreeNode:
-    def __init__(self,
-                 name,
-                 children=None,
-                 labels=None):
+    def __init__(
+            self,
+            name,
+            children=None,
+            labels=None):
         self.name = name
         self.children = children or set()
         self.labels = labels or set()
