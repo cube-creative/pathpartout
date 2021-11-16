@@ -3,7 +3,7 @@ from pathpartout.infrastructure.path_tree_presenter import TreePathPresenter
 
 
 def get_from_label(label_name, filepath):
-    """Find config associate to the given filepath and get a TreePath object with info and labels relative to it.
+    """Find config associated to the given filepath and get a TreePath object with info and labels relative to it.
 
     This request return a Model-Presenter TreePath, with many method to interact with the api.
     See TreePath definition for more information.
@@ -22,7 +22,10 @@ def get_from_label(label_name, filepath):
 
 
 def get_from_shot_working_filepath(filepath):
-    """Same action that get_from_label, but always with the label "shot_working_file".
+    """Find config associated to the given filepath and get a TreePath object with info of the label "shot_working_file".
+
+    This request return a Model-Presenter TreePath, with many method to interact with the api.
+    See TreePath definition for more information.
 
     Args:
         filepath (str): The filepath of the shot working file.

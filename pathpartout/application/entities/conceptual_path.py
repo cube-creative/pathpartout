@@ -14,7 +14,7 @@ class ConceptualPath:
 
     def parse_info_names(self, info):
         for element in self.path_elements:
-            variable_pattern = re.compile("\{\{([\w]+)\??:?[\w]*\}\}")
+            variable_pattern = re.compile("\{\{([\w]+)\??:?[\w]*\}\}")  # {{variable_name[?:number]}}
             info.update(variable_pattern.findall(element))
 
     def extract(self, concrete_filepath):
@@ -30,7 +30,7 @@ class ConceptualPath:
         return info
 
     def extract_from_path_element(self, concrete_element, conceptual_element, info):
-        variable_pattern = re.compile("\{\{([\w]+)(\?)?:?([\w]+)?\}\}")
+        variable_pattern = re.compile("\{\{([\w]+)(\?)?:?([\w]+)?\}\}")  # {{variable_name[?:number]}}
         variable_found = variable_pattern.findall(conceptual_element)
 
         re_element = conceptual_element
@@ -47,7 +47,7 @@ class ConceptualPath:
             info[var[0]] = match.group(i+1)
 
     def fill(self, info):
-        variable_pattern = re.compile("\{\{([\w]+)\??:?[\w]*\}\}")
+        variable_pattern = re.compile("\{\{([\w]+)\??:?[\w]*\}\}")  # {{variable_name[?:number]}}
 
         concept_path = "/".join(self.path_elements)
         variables_found = variable_pattern.findall(concept_path)
