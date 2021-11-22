@@ -7,7 +7,7 @@ class TreeNode:
             name,
             children=None,
             labels=None):
-        self.name = name
+        self.name = name.lower()
         self.children = children or set()
         self.labels = labels or set()
 
