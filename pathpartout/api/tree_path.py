@@ -22,7 +22,7 @@ class TreePath:
 
     def get_label_path(self, label_name):
         if label_name not in self._available_labels:
-            print("")
+            ValueError("Given label doesn't exist in the current config.")
         else:
             info = {k: v for (k, v) in self.info.items() if k in self._available_info and v is not None}
             return config.find_label_path(self._config_filepath, label_name, info)
