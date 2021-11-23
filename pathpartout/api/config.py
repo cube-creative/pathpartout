@@ -13,4 +13,4 @@ def find_label_path(config_filepath, label_name, info):
         str: filepath corresponding to the given label name.
 
     """
-    return path_finder.find_from_label(config_filepath, label_name, info)
+    return path_finder.find_from_label(config_filepath, label_name.lower(), info)

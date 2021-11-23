@@ -17,7 +17,7 @@ def get_from_label(label_name, filepath):
 
     """
     tree_path_presenter = TreePathPresenter()
-    tree_builder.build_from_label(tree_path_presenter, label_name, filepath)
+    tree_builder.build_from_label(tree_path_presenter, label_name.lower(), filepath.lower())
     return tree_path_presenter.tree_path
 
 
@@ -35,5 +35,5 @@ def get_from_shot_working_filepath(filepath):
 
     """
     tree_path_presenter = TreePathPresenter()
-    tree_builder.build_from_label(tree_path_presenter, "shot_working_file", filepath)
+    tree_builder.build_from_label(tree_path_presenter, "shot_working_file", filepath.lower())
     return tree_path_presenter.tree_path
