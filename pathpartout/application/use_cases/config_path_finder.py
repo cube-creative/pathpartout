@@ -5,9 +5,8 @@ CONFIG_FILE_NAME = "path_partout.conf"
 
 
 def find_from_path(path):
-    if os.path.isdir(path):
-        if _has_valid_config_file(path):
-            return os.path.join(path, CONFIG_FILE_NAME).replace('\\', '/')
+    if os.path.isdir(path) and _has_valid_config_file(path):
+        return os.path.join(path, CONFIG_FILE_NAME).replace('\\', '/')
 
     while not _is_file_system_root(path):
         path = os.path.dirname(path)
