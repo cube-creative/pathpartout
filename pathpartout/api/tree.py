@@ -57,6 +57,8 @@ def get_from_label(label_name, path):
         TreePath corresponding to the config file found and the given information.
 
     """
+    if not label_name:
+        raise ValueError("Path Partout: get_from_label need label_name argument")
     if not path:
         raise ValueError("Path Partout: get_from_label need path argument")
 
@@ -78,6 +80,9 @@ def get_from_shot_working_filepath(filepath):
         TreePath corresponding to the config file found and the given filepath.
 
     """
+    if not filepath:
+        raise ValueError("Path Partout: get_from_shot_working_filepath need filepath argument")
+
     tree_path_presenter = TreePathPresenter()
     tree_builder.build_from_label(tree_path_presenter, "shot_working_file", filepath.lower())
     return tree_path_presenter.tree_path
