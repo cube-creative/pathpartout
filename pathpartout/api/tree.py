@@ -33,6 +33,7 @@ def get_from_path(path):
 
         Returns:
             TreePath corresponding to the config file found.
+
         """
     if not path:
         raise ValueError("Path Partout: get_from_path need path argument")
