@@ -21,7 +21,7 @@ class TreePath:
     def config_filepath(self):
         return self._config_filepath
 
-    def hydrate_info(self, new_info):
+    def populate_info(self, new_info):
         for info_name, value in new_info.items():
             if info_name in self.available_info:
                 self.info[info_name] = value
