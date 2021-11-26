@@ -1,4 +1,5 @@
 from pathpartout.api import config
+import logging
 
 
 class TreePath:
@@ -19,6 +20,13 @@ class TreePath:
     @property
     def config_filepath(self):
         return self._config_filepath
+
+    def hydrate_info(self, new_info):
+        for info_name, value in new_info.items():
+            if info_name in self.available_info:
+                self.info[info_name] = value
+            else:
+                logging.warning(f"{info_name} is not an available information in configuration: {self.config_filepath}")
 
     def get_label_path(self, label_name):
         if label_name not in self._available_labels:
