@@ -22,7 +22,7 @@ class ConceptualPath:
         concrete_filepath_elements = concrete_filepath.split('/')
 
         if len(concrete_filepath_elements) != len(self.path_elements):
-            raise ValueError("Given filepath doesn't match the label path in the config file.")
+            raise ValueError("Path Partout: Given filepath doesn't match the label path in the config file.")
 
         info = dict()
         for i, element in enumerate(concrete_filepath_elements):
@@ -41,7 +41,7 @@ class ConceptualPath:
         element_pattern = re.compile(re_element)
         match = element_pattern.fullmatch(concrete_element)
         if not match:
-            raise ValueError("Given filepath doesn't match the label path in the config file.")
+            raise ValueError("Path Partout: Given filepath doesn't match the label path in the config file.")
 
         for i, var in enumerate(variable_found):
             info[var[0]] = match.group(i+1)
@@ -53,7 +53,7 @@ class ConceptualPath:
         variables_found = variable_pattern.findall(concept_path)
         missing_variables = set([var for var in variables_found if not info.get(var)])
         if missing_variables:
-            raise ValueError(f"Missing info to found label path : {','.join(missing_variables)}")
+            raise ValueError(f"Path Partout: Missing info to found label path : {','.join(missing_variables)}")
 
         path = concept_path
         for var in variables_found:

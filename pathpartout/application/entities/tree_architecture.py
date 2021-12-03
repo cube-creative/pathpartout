@@ -9,7 +9,7 @@ class TreeArchitecture:
     def build_from_config(architecture_config):
         tree_architecture = TreeArchitecture()
         if not isinstance(architecture_config, dict):
-            raise ValueError("Architecture config should be dictionary")
+            raise ValueError("Path Partout: Architecture config should be dictionary")
 
         for tree_name, tree_content in architecture_config.items():
             tree_architecture.trees.add(TreeNode.build_from_config(tree_name, tree_content))
