@@ -183,7 +183,7 @@ tree_path.populate_info({"project_name": "pfffirates_serie", "asset_name": "mosq
 
 ### Récupérer le chemin associé à un label
 Si un Treepath contient les informations suffisantes, on peut demander le chemin d'un label présent dans la configuration:
-```
+```python
 # Retourne le chemin associé au label pushed
 path = tree_path.get_label_path("pushed")
 ```
