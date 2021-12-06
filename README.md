@@ -40,7 +40,7 @@ Chaque champ, dans cette structure, peut correspondre soit à un `Dossier`, soit
 
 Un `Dossier` va conventionnellement être nommé entre guillemets, et contient toujours d'autres champs `Dossier`, et/ou 
 `Label` à son tour. `"{{project_name}}"` désigne dans l'exemple ci-dessus un `Dossier`, contenant deux autres `Dossier`: 
-`"asset"` et `"folder"`. 
+`"asset"` et `"projet"`. 
 Ces `Dossier` vont permettre de représenter une structure de dossiers liées à une organisation commune, comme celle 
 des dossiers utilisés au sein d'un projet d'animation, par exemple.
 
