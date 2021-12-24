@@ -9,13 +9,15 @@ class ConceptualPath:
     def get_all_empty_info(conceptual_paths):
         info = set()
         for path in conceptual_paths:
-            path.parse_info_names(info)
+            info.update(path.parse_info_names())
         return {i: None for i in info}
 
-    def parse_info_names(self, info):
+    def parse_info_names(self):
+        info = set()
         for element in self.path_elements:
             variable_pattern = re.compile("\{\{([\w]+)\??:?[\w]*\}\}")  # {{variable_name[?:number]}}
             info.update(variable_pattern.findall(element))
+        return info
 
     def extract(self, concrete_filepath):
         concrete_filepath = concrete_filepath.replace('\\', '/')
@@ -60,12 +62,9 @@ class ConceptualPath:
             path = variable_pattern.sub(info.get(var), path, count=1)
         return path
 
-
-
-
-
-
-
-
-
-
+    def contains_info_needed(self, info):
+        info_needed_names = self.parse_info_names()
+        for info_name in info_needed_names:
+            if info.get(info_name) is None:
+                return False
+        return True
