@@ -57,5 +57,9 @@ class TreeNode:
             paths.append(ConceptualPath(parent_path).fill(info))
             return
 
+        if not self.children:
+            paths.append(ConceptualPath(node_path).fill(info))
+            return
+
         for child in self.children:
             child.get_all_filled_paths_with_given_info(paths, node_path, info)
