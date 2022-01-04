@@ -15,7 +15,7 @@ def get_info_needed(path):
 
 
 def generate(path, info_needed):
-    """ Generate the base for new project folder architecture depending on the given config path.
+    """Generate the base for new project folder architecture depending on the given config path.
 
         Args:
             path (str): The path use to find the config.
