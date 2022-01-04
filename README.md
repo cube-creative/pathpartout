@@ -231,3 +231,54 @@ print(tree_path.get_label_path("shot_working_file"))
     
 Output: 'P:\Pfffirates_Serie\projet\episode\e0143_surgonflette\shot\s005\p016\clean\wip\e0143_s005_p016_clean_v002.blend'
 ```
+
+## Auto arbo
+Path Partout est également capable de générer la base de l'arborescence de dossiers d'un projet, c'est à dire les 
+dossiers principaux qui ne sont pas liés à des épisodes ou assets spécifiques.
+
+Pour utiliser cette fonctionnalité, il faut définir dans le fichier `path_partout.conf` concerné la liste des variables
+qu'il est nécessaire de connaitre pour initialiser l'arborescence de base. Cette liste doit être dans un champ `auto_arbo`
+à la racine de la configuration.
+
+Voici un exemple : 
+```yaml
+"p:":
+  "{{project_name}}":
+    "projet":
+      "asset":
+        "{{asset_type}}_{{asset_type_name}}":
+            ...
+      "episode":
+        ...
+        
+auto_arbo:
+  - "project_name"
+```
+
+Ici nous indiquons que nous désirons une valeur pour la variable `project_name` afin d'initialiser l'arborescence.
+
+Une fois cet élément défini, il nous suffit d’appeler la fonction `auto_arbo.get_info_needed` en spécifiant le chemin 
+du fichier de configuration `path_partout.conf` qui nous intéresse (ou d'un emplacement concerné par cette configuration).
+```python
+from pathpartout import auto_arbo
+
+path = "P:/path_partout.conf"
+info_needed = auto_arbo.get_info_needed(path)
+# info_needed => { "project_name": None }
+```
+La fonction retourne un dictionnaire dont les champs sont les infos qu'il est nécessaire de renseigner. La valeur de 
+chaque champ vaut `None` pour le moment.
+
+Il nous suffit ensuite de remplir le dictionnaire avec les valeurs que nous souhaitons. Nous pouvons ensuite appeler la 
+fonction `auto_arbo.generate` en rappelant le chemin de configuration et en donnant le dictionnaires d'infos complété : 
+```python
+from pathpartout import auto_arbo
+
+path = "P:/path_partout.conf"
+info_needed = auto_arbo.get_info_needed(path)
+info_needed["project_name"] = "my-new-project-name"
+auto_arbo.generate(path, info_needed)
+```
+La fonction `auto_arbo.generate` va s'occuper de générer l'ensemble des dossiers d'une nouvelle architecture. Path Partout 
+créera autant de dossiers qu'il est possible de le faire avec les informations que vous lui aurez données : si il tombe
+sur un nom de sous-dossier constitué d'une variable qu'il ne connait pas, il ne créera pas ce dossier ni ses sous-dossiers.
