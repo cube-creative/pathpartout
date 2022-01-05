@@ -11,7 +11,8 @@ def get_info_needed(path):
             dict: keys are names of info needed. values are all None.
 
     """
-    return tree_base_getter.get_tree_base_info_needed(path)
+    info_needed_list = tree_base_getter.get_tree_base_info_needed(path)
+    return {info: None for info in info_needed_list}
 
 
 def generate(path, info_needed):
