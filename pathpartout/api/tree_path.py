@@ -1,4 +1,4 @@
-from pathpartout.api import config
+from pathpartout.api import config_folders, aggregate, label
 import logging
 
 
@@ -17,6 +17,8 @@ class TreePath:
 
     def __init__(self):
         self.info = dict()
+        self._name = None
+        self._aggregates = list()
         self._available_info = list()
         self._available_labels = list()
         self._config_filepath = str()
@@ -32,6 +34,14 @@ class TreePath:
     @property
     def config_filepath(self):
         return self._config_filepath
+
+    @property
+    def aggregates(self):
+        return self._aggregates
+
+    @property
+    def name(self):
+        return self._name
 
     def populate_info(self, new_info):
         """Edit multiple info with given dict.
@@ -59,4 +69,21 @@ class TreePath:
             raise ValueError("Path Partout : Given label doesn't exist in the current config.")
         else:
             info = {k: v for (k, v) in self.info.items() if k in self._available_info and v is not None}
-            return config.find_label_path(self._config_filepath, label_name, info)
+            return label.find_label_path(self._config_filepath, label_name, info)
+
+    def get_aggregates(self, name):
+        if name not in self._aggregates:
+            raise ValueError(
+                "Path Partout : Given aggregate {aggregate_name} doesn't exist in the current config.".format(
+                    aggregate_name=name
+                )
+            )
+        return aggregate.get(name, self.config_filepath, self.info)
+
+    def fill_with_label(self, label_name, path):
+        info = label.get_info_from_label(self.config_filepath, label_name, path)
+        self.info.update(info)
+
+    def fill_with_aggregate(self, aggregate_name, value):
+        info = aggregate.get_info_from_aggregate(self.config_filepath, aggregate_name, value)
+        self.info.update(info)

@@ -1,4 +1,4 @@
-from pathpartout.application.use_cases import path_finder
+from pathpartout.application.use_cases import path_finder, info_getter
 
 
 def find_label_path(config_filepath, label_name, info):
@@ -14,3 +14,7 @@ def find_label_path(config_filepath, label_name, info):
 
     """
     return path_finder.find_from_label(config_filepath, label_name.lower(), info)
+
+
+def get_info_from_label(config_filepath, label, path):
+    return info_getter.get_info_from_label(config_filepath, label, path.lower())

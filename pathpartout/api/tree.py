@@ -1,4 +1,4 @@
-from pathpartout.application.use_cases import tree_builder
+from pathpartout.application.use_cases import tree_builder, path_finder
 from pathpartout.infrastructure.path_tree_presenter import TreePathPresenter
 
 
