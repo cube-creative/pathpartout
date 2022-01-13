@@ -1,19 +1,19 @@
 import os
 from pathpartout.application.use_cases import config_reader
-ENV_CONFIG_FOLDER_NAME = "PATH_PARTOUT_CONF_FOLDERS"
+ENV_CONFIG_FOLDERS_NAME = "PATH_PARTOUT_CONF_FOLDERS"
 
 
 def set_configuration_folders(folders_paths):
     for path in folders_paths:
         if not os.path.isdir(path):
             raise ValueError("Config Folder {path} does not exist.".format(path=path))
-    os.environ[ENV_CONFIG_FOLDER_NAME] = ";".join(folders_paths)
+    os.environ[ENV_CONFIG_FOLDERS_NAME] = ";".join(folders_paths)
 
 
 def get_conf_from_folders():
     conf_file_paths = list()
-    if os.environ.get(ENV_CONFIG_FOLDER_NAME):
-        folders_paths = os.environ[ENV_CONFIG_FOLDER_NAME].split(";")
+    if os.environ.get(ENV_CONFIG_FOLDERS_NAME):
+        folders_paths = os.environ[ENV_CONFIG_FOLDERS_NAME].split(";")
         for folder in folders_paths:
             conf_file_paths.extend(get_conf_from_folder(folder))
     return conf_file_paths

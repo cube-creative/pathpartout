@@ -8,7 +8,7 @@ class Configuration:
         self.trees = conf_data.get("trees")
         self.scopes = conf_data.get("scopes", list())
         self.search_terms = conf_data.get("search_terms", dict())
-        self.aggregates = conf_data.get("aggregates", list())
+        self.aggregates = conf_data.get("aggregates", dict())
         self.auto_arbo_info = conf_data.get("auto_arbo", list())
 
     @property

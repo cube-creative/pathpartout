@@ -23,8 +23,6 @@ class ConceptualPath:
         concrete_filepath = concrete_filepath.replace('\\', '/')
         concrete_filepath_elements = concrete_filepath.split('/')
 
-        print(self.path_elements)
-        print(concrete_filepath_elements)
         if len(concrete_filepath_elements) != len(self.path_elements):
             raise ValueError("Path Partout: Given filepath doesn't match the label path in the config file.")
 

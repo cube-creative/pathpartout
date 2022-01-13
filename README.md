@@ -107,6 +107,43 @@ Si aucun fichier de configuration n'est trouvé, une erreur est retournée.
 Un **seul fichier** de configuration est toujours considéré lors de ce processus. Même si plusieurs fichiers de 
 configuration sont présents dans les dossiers parents, seul celui dans le dossier le plus éloigné de la racine du volume disque sera considéré.
 
+### Configurer des dossiers de configuration
+Une autre possibilité permettant de rassembler ses fichiers de configuration au même endroit, est de définir des dossiers de configuration.
+
+Pour cela, il suffit de renseigner les dossiers voulus dans la variable d'environnement `PATH_PARTOUT_CONF_FOLDERS`.
+Exemple : `PATH_PARTOUT_CONF_FOLDERS = "C:/my/path/1/;C:/my/path/2/`. Il est également possible de renseigner ces chemins via l'API de Path Partout avec `pathpartout.config_folders.set_paths()`.
+
+Path Partout cherchera l'ensemble des fichiers ayant l'extension `.conf` présents dans les dossiers définis comme dossiers de configuration, ainsi que dans leurs sous-dossiers.
+
+Pour que Path Partout puisse identifier à quel fichier de configuration se référer lorsque vous lui indiquez un chemin,
+vous devez, dans les fichiers de configuration, définir un champ `scopes` dans lequel vous lister les dossiers dans lesquels le fichier de configuration sera actif. Path Partout considèrera toujours le fichier ayant le scope le plus restreint par rapport au chemin à traiter.
+
+Par exemple, si j'ai un fichier de configuration avec un scope `P:/` et un autre avec `P:/son`, et que je cherche des 
+informations à partir du fichier `P:/son/asset/my_file.ext`, alors c'est le second fichier de configuration avec le scopele plus précis `P:/son` qui sera considéré.
+
+Noter que même si des dossiers de configuration sont renseignés, les fichiers présents dans l'arborescence de dossier 
+seront quand même traités s'il existent. En cas de scope identique, c'est le fichier présent dans l'arborescence et non 
+celui dans les dossiers de configuration qui sera pris en compte.
+
+### Recherche de fichier dans les dossiers de configuration
+
+L'usage de dossiers de configuration vous permet d'effectuer des recherches dans les fichiers de configuration de 
+vos dossiers. 
+Vous pouvez donner un nom à vos fichiers de configuration avec le champ `name`, et ensuite chercher le chemin d'une 
+configuration via l'API avec `pathpartout.config_folders.get_config_path_by_name()`
+
+Vous pouvez également définir des termes de recherches dans vos configurations, comme ceci : 
+
+```yaml
+search_term:
+  "projects":
+    - "son_teaser"
+    - "WLC"
+```
+Vous pouvez ensuite retrouver le chemin de ce fichier de configuration via l'API en faisant : 
+`pathpartout.config_folders.search_config_path("projects", "son_teaser")`
+
+
 ### Liaison de deux fichiers `path_partout.conf` (utilisation avancée)
 Il arrive que l'on souhaite considérer de façon unifiée, la structure de dossiers présente sur plusieurs volumes disques 
 en même temps.
@@ -117,7 +154,7 @@ chemins vers les autres fichiers `path_partout.conf` associés dans le champs `l
 
 Si je veux par exemple liés les fichiers de configurations présents aux emplacements `P:/path_partout.conf` et 
 `I:/path_partout.conf`, j'aurai dans le premier :
-```
+```yaml
 "p:":
   "{{project_name}}":
     label:""
@@ -125,7 +162,7 @@ linked:
    - "i:/path_partout.conf"
 ```
 Dans le second : 
-```
+```yaml
 "i:":
   "{{asset_name}}":
     label:""
@@ -181,6 +218,15 @@ tree_path.info["asset_name"] = "mosquito001"
 tree_path.populate_info({"project_name": "pfffirates_serie", "asset_name": "mosquito001"})
 ```
 
+Vous pouvez également ajouter des informations à un TreePath existant à l'aide d'un label ou d'un agrégat:
+```python
+filepath = 'P:\Pfffirates_Serie\projet\episode\e0143_surgonflette\shot\s005\p016\clean\wip\e0143_s005_p016_clean_v001.blend'
+# Extrait les informations du chemin du label.
+tree_path.fill_with_label("shot_working_file", filepath)
+# Extrait les informations présentes dans l'agrégat défini dans la configuration. 
+tree_path.fill_with_aggregate("episode_full_name", "e0143_surgonflette")
+```
+
 ### Récupérer le chemin associé à un label
 Si un Treepath contient les informations suffisantes, on peut demander le chemin d'un label présent dans la configuration:
 ```python
@@ -190,6 +236,20 @@ path = tree_path.get_label_path("pushed")
 Si les informations pour créer le chemin ne sont pas suffisantes, une erreur sera levée, spécifiant les informations
 manquantes.
 
+### Récupérer la valeur d'un agrégat
+Dans votre fichier de configuration vous pouvez définir des agrégats dont la valeur est généralement un composé de 
+plusieurs informations de la configuration.
+
+Exemple : 
+```yaml
+aggregates: 
+  "episode_full_name": "s{{season_number:2}}e{{episode_number:3}}_{{episode_name}}"
+```
+
+Depuis un TreePath disposant déjà des informations nécessaires, vous pouvez récupérer la valeur d'un agrégat: 
+```python
+tree_path.get_aggregate("episode_full_name") # output: "s01e043_surgonflette"
+```
 
 ## Exemple d'utilisation Cube spécifique
 ### Récupérer les informations présentes dans le chemin d'un fichier de travail d'un shot
@@ -215,7 +275,8 @@ Output: 'I:/Pfffirates_Serie/projet/episode/e0143_surgonflette/shot/s005/p016/cl
 ### Récupérer le chemin de travail d'un shot à partir de ses informations sur le projet Pfffirates
 ```python
 info = {'episode_name': 'surgonflette', 'task': 'clean', 'variant': 'clean', 'version_number': '001', 'season_number': '01', 'episode_number': '43', 'sequence_number': '005', 'extension': 'blend', 'project_name': 'Pfffirates_Serie', 'letter': 'P', 'shot_number': '016'}
-tree_path = pathpartout.tree_path.get_from_path("P:/Pfffirates_serie")
+config_path = pathpartout.config_folders.search_config_path("projects", "Pfffirates_serie")
+tree_path = pathpartout.config_folders.get_from_config(config_path)
 tree_path.populate_info(info)
 print(tree_path.get_label_path("shot_working_file")) 
     

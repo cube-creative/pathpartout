@@ -24,4 +24,4 @@ def generate(path, info_needed):
                 see get_info_needed() request to have info needed empty dict.
 
     """
-    return tree_base_builder.build_tree_base(path, info_needed)
+    tree_base_builder.build_tree_base(path, info_needed)
