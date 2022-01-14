@@ -21,7 +21,7 @@ def get_info_from_aggregate(config_filepath, aggregate, value):
 
         Args:
             config_filepath (str): Path of the configuration file to consider.
-            aggregate (str): Name of the aggregate to confider.
+            aggregate (str): Name of the aggregate to consider.
             value (dict(str, int)): Value of the aggregate in which extract info.
 
         Returns:
