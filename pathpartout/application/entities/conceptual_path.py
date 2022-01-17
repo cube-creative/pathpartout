@@ -44,7 +44,11 @@ class ConceptualPath:
         element_pattern = re.compile(re_element)
         match = element_pattern.fullmatch(concrete_element)
         if not match:
-            raise ValueError("Path Partout: Given filepath doesn't match the label path in the config file.")
+            raise ValueError(
+                "Path Partout: Given filepath doesn't match the label path in the config file."
+                "\n\tconcrete_element: {} doesn't match conceptual element: {}".format(concrete_element,
+                                                                                       conceptual_element)
+            )
 
         for i, var in enumerate(variable_found):
             is_number = var[3]
