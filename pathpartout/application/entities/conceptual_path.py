@@ -2,6 +2,10 @@ import re
 
 
 class ConceptualPath:
+    parse_info_regex = re.compile("\{\{([\w]+)\??:?[\w]*\}\}") # {{variable_name[?:number]}}
+    extract_regex = re.compile("\{\{([\w]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
+    fill_regex = re.compile("\{\{([\w]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
+
     def __init__(self, path_elements):
         self.path_elements = path_elements or list()
 
@@ -15,8 +19,7 @@ class ConceptualPath:
     def parse_info_names(self):
         info = set()
         for element in self.path_elements:
-            variable_pattern = re.compile("\{\{([\w]+)\??:?[\w]*\}\}")  # {{variable_name[?:number]}}
-            info.update(variable_pattern.findall(element))
+            info.update(self.parse_info_regex.findall(element))
         return info
 
     def extract(self, concrete_filepath):
@@ -32,12 +35,11 @@ class ConceptualPath:
         return info
 
     def extract_from_path_element(self, concrete_element, conceptual_element, info):
-        variable_pattern = re.compile("\{\{([\w]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
-        variable_found = variable_pattern.findall(conceptual_element)
+        variable_found = self.extract_regex.findall(conceptual_element)
         re_element = conceptual_element
         for var in variable_found:
             occurrence = "{" + var[2] + "}" if var[2] else "*" if var[1] else "+"
-            re_element = variable_pattern.sub("([A-Za-z0-9_]" + occurrence + ")", re_element, count=1)
+            re_element = self.extract_regex.sub("([A-Za-z0-9_]" + occurrence + ")", re_element, count=1)
 
         element_pattern = re.compile(re_element)
         match = element_pattern.fullmatch(concrete_element)
@@ -50,10 +52,8 @@ class ConceptualPath:
             info[var[0]] = new_info if not is_number else int(new_info)
 
     def fill(self, info):
-        variable_pattern = re.compile("\{\{([\w]+)\??:?([0-9]*)(d)?\}\}")  # {{variable_name[?:number]}}
-
         concept_path = "/".join(self.path_elements)
-        variables_found = variable_pattern.findall(concept_path)
+        variables_found = self.fill_regex.findall(concept_path)
         missing_variables = set([var[0] for var in variables_found if not info.get(var[0])])
         if missing_variables:
             raise ValueError(f"Path Partout: Missing info to found label path : {','.join(missing_variables)}")
@@ -63,7 +63,7 @@ class ConceptualPath:
             value = info.get(var[0])
             if var[2]:
                 value = f"{value:0{var[1]}d}"
-            path = variable_pattern.sub(value, path, count=1)
+            path = self.fill_regex.sub(value, path, count=1)
         return path
 
     def contains_info_needed(self, info):
