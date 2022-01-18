@@ -3,13 +3,13 @@ from .tree_node import TreeNode
 
 class TreeArchitecture:
     def __init__(self):
-        self.configuration = None
+        self.config = None
         self.trees = set()
 
     @staticmethod
     def build_from_config(config):
         tree_architecture = TreeArchitecture()
-        tree_architecture.configuration = config
+        tree_architecture.config = config
         for tree in config.trees:
             for tree_name, tree_content in tree.items():
                 tree_architecture.trees.add(TreeNode.build_from_config(tree_name, tree_content))

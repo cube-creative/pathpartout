@@ -10,7 +10,10 @@ def build_from_label(tree_presenter, label, path):
     labels_paths = tree_architecture.get_all_path_labels()
     if not labels_paths.get(label):
         raise ValueError(
-            f"Path Partout: Given filepath doesn't have {label} label in its config file : {config_filepath}.")
+            "Path Partout: Given filepath doesn't have {label} label in its config file : {config_filepath}.".format(
+                label=label,
+                config_filepath=config_filepath
+            ))
     tree_presenter.set_labels(list(labels_paths.keys()))
     info = ConceptualPath.get_all_empty_info(labels_paths.values())
     info.update(labels_paths.get(label).extract(path))

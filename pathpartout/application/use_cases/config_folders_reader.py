@@ -3,7 +3,7 @@ from pathpartout.application.use_cases import config_reader
 ENV_CONFIG_FOLDERS_NAME = "PATH_PARTOUT_CONF_FOLDERS"
 
 
-def set_configuration_folders(folders_paths):
+def set_config_folders(folders_paths):
     for path in folders_paths:
         if not os.path.isdir(path):
             raise ValueError("Config Folder {path} does not exist.".format(path=path))

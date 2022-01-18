@@ -60,13 +60,15 @@ class ConceptualPath:
         variables_found = self.fill_regex.findall(concept_path)
         missing_variables = set([var[0] for var in variables_found if not info.get(var[0])])
         if missing_variables:
-            raise ValueError(f"Path Partout: Missing info to found label path : {','.join(missing_variables)}")
+            raise ValueError("Path Partout: Missing info to found label path : {missing_variables}".format(
+                missing_variables=','.join(missing_variables)
+            ))
 
         path = concept_path
         for var in variables_found:
             value = info.get(var[0])
             if var[2]:
-                value = f"{value:0{var[1]}d}"
+                value = str(value).zfill(var[1])
             path = self.fill_regex.sub(value, path, count=1)
         return path
 

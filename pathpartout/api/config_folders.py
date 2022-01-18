@@ -12,7 +12,7 @@ def set_paths(paths):
         info (dict of str): Information to include in the configuration.
 
     """
-    config_folders_reader.set_configuration_folders(paths)
+    config_folders_reader.set_config_folders(paths)
 
 
 def get_config_path_by_name(name):

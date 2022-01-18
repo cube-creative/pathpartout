@@ -56,7 +56,11 @@ class TreePath:
             if info_name in self.available_info:
                 self.info[info_name] = value
             else:
-                logging.warning(f"{info_name} is not an available information in configuration: {self.config_filepath}")
+                logging.warning(
+                    "{info_name} is not an available information in configuration: {config_filepath}".format(
+                        info_name=info_name,
+                        config_filepath=self.config_filepath
+                    ))
 
     def get_label_path(self, label_name):
         """Get path associated to the given label.

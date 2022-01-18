@@ -7,9 +7,9 @@ def read_from_filepath(config_filepath):
     config_data = _open_config_file(config_filepath)
     if not _is_valid_config_data(config_data):
         raise ValueError("Config {config_filepath} has incorrect syntax.".format(config_filepath=config_filepath))
-    configuration = Configuration(config_filepath, config_data)
-    _resolve_links(configuration, config_data)
-    return configuration
+    config = Configuration(config_filepath, config_data)
+    _resolve_links(config, config_data)
+    return config
 
 
 def read_scopes(config_filepath):
@@ -37,14 +37,14 @@ def is_valid_config_filepath(filepath):
     return _is_valid_config_data(_open_config_file(filepath))
 
 
-def _resolve_links(configuration, config_data):
+def _resolve_links(config, config_data):
     if not config_data.get("linked"):
         return
     for linked_config_filepath in config_data.get("linked"):
         linked_config_data = _open_config_file(linked_config_filepath)
         if not _is_valid_config_data(linked_config_data):
             raise ValueError("Linked configuration {linked_config_filepath} has invalid syntax.")
-        configuration.extend_with_linked_data(linked_config_data)
+        config.extend_with_linked_data(linked_config_data)
 
 
 def _open_config_file(config_filepath):

@@ -34,7 +34,7 @@ def _search_valid_config_filepath(path, scopes=None):
     if os.path.isfile(config_filepath):
         if config_reader.is_valid_config_filepath(config_filepath):
             return config_filepath
-        logging.warning(f"Invalid configuration file found : {config_filepath}")
+        logging.warning("Invalid configuration file found : {path}".format(path=config_filepath))
 
 
 def _is_file_system_root(path):
