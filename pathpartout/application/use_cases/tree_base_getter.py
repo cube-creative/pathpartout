@@ -4,7 +4,7 @@ from pathpartout.application.entities import TreeArchitecture
 
 def get_tree_base(config_filepath, info_needed):
     config = config_reader.read_from_filepath(config_filepath)
-    missing_info_names = [info for info in config.auto_arbo_info if info not in info_needed.keys()]
+    missing_info_names = [info for info in config.auto_arbo_info_needed if info not in info_needed.keys()]
     if missing_info_names:
         raise ValueError("Missing info needed to create base tree structure : {missing_info_names}".format(
             missing_info_names=' '.join(missing_info_names)
@@ -15,4 +15,4 @@ def get_tree_base(config_filepath, info_needed):
 
 def get_tree_base_info_needed(config_filepath):
     config = config_reader.read_from_filepath(config_filepath)
-    return config.auto_arbo_info
+    return config.auto_arbo_info_needed

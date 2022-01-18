@@ -9,7 +9,7 @@ class Configuration:
         self.scopes = conf_data.get("scopes", list())
         self.search_terms = conf_data.get("search_terms", dict())
         self.aggregates = conf_data.get("aggregates", dict())
-        self.auto_arbo_info = conf_data.get("auto_arbo", list())
+        self.auto_arbo_info_needed = conf_data.get("auto_arbo", list())
 
     @property
     def aggregates_names(self):
@@ -34,7 +34,7 @@ class Configuration:
         for aggregate, value in linked_data.get("aggregates", dict()).items():
             self.search_terms.setdefault(aggregate, value)
         self.scopes = list(set(self.scopes + linked_data.get("scopes", list())))
-        self.auto_arbo_info = list(set(self.auto_arbo_info + linked_data.get("auto_arbo", list())))
+        self.auto_arbo_info_needed = list(set(self.auto_arbo_info_needed + linked_data.get("auto_arbo", list())))
 
 
 
