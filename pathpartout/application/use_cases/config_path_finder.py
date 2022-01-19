@@ -18,6 +18,7 @@ def find_by_name(name):
 def find_from_path(path):
     scopes = config_folders_reader.get_config_paths_by_scopes()
     path = os.path.dirname(path) if os.path.isfile(path) else path
+    path = path.replace('\\', '/')
     while True:
         config_filepath = _search_valid_config_filepath(path, scopes)
         if config_filepath:
