@@ -324,8 +324,8 @@ du fichier de configuration `path_partout.conf` qui nous intéresse (ou d'un emp
 from pathpartout import auto_arbo
 
 path = "P:/path_partout.conf"
-info_needed = auto_arbo.get_info_needed(path)
-# info_needed => { "project_name": None }
+required_info = auto_arbo.get_required_info(path)
+# required_info => { "project_name": None }
 ```
 La fonction retourne un dictionnaire dont les champs sont les infos qu'il est nécessaire de renseigner. La valeur de 
 chaque champ vaut `None` pour le moment.
@@ -336,9 +336,9 @@ fonction `auto_arbo.generate` en rappelant le chemin de configuration et en donn
 from pathpartout import auto_arbo
 
 path = "P:/path_partout.conf"
-info_needed = auto_arbo.get_info_needed(path)
-info_needed["project_name"] = "my-new-project-name"
-auto_arbo.generate(path, info_needed)
+required_info = auto_arbo.get_required_info(path)
+required_info["project_name"] = "my-new-project-name"
+auto_arbo.generate(path, required_info)
 ```
 La fonction `auto_arbo.generate` va s'occuper de générer l'ensemble des dossiers d'une nouvelle architecture. Path Partout 
 créera autant de dossiers qu'il est possible de le faire avec les informations que vous lui aurez données : si il tombe

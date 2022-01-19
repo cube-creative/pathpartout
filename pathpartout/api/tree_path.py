@@ -65,7 +65,7 @@ class TreePath:
     def get_label_path(self, label_name):
         """Get path associated to the given label.
 
-        If info needed for building the path are missing, raise an error that specify the missing info.
+        If required info for building the path are missing, raise an error that specify the missing info.
 
         Args:
             label_name(str): name of the label that we want the path.
