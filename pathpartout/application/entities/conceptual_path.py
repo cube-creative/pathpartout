@@ -67,8 +67,8 @@ class ConceptualPath:
         path = concept_path
         for var in variables_found:
             value = info.get(var[0])
-            if var[2]:
-                value = str(value).zfill(var[1])
+            if var[3]:
+                value = str(value).zfill(int(var[2]))
             path = self.fill_regex.sub(value, path, count=1)
         return path
 

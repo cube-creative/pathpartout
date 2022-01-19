@@ -25,6 +25,9 @@ def find_from_path(path):
 
         path = os.path.dirname(path)
         if _is_file_system_root(path):
+            config_filepath = _search_valid_config_filepath(path, scopes)
+            if config_filepath:
+                return config_filepath
             raise ValueError("Path Partout: Given filepath doesn't have associate config file.")
 
 
