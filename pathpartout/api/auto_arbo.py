@@ -1,27 +1,27 @@
 from pathpartout.application.use_cases import tree_base_builder, tree_base_getter
 
 
-def get_info_needed(path):
-    """Find config associated to the given path and get dict of needed info to generate the base of the arbo.
+def get_required_info(config_path):
+    """Get dict of required info to generate the base of the arbo of the config given filepath.
 
         Args:
-            path (str): The path use to find the config.
+            config_path (str): Path of the configuration file to consider.
 
         Returns:
-            dict: keys are names of info needed. values are all None.
+            dict: keys are names of required info. values are all None.
 
     """
-    info_needed_list = tree_base_getter.get_tree_base_info_needed(path)
-    return {info: None for info in info_needed_list}
+    required_info_list = tree_base_getter.get_required_tree_base_info(config_path)
+    return {info: None for info in required_info_list}
 
 
-def generate(path, info_needed):
+def generate(config_path, required_info):
     """Generate the base for new project folder architecture depending on the given config path.
 
         Args:
-            path (str): The path use to find the config.
-            info_needed (dict) : info used to generate the base folder architecture.
-                see get_info_needed() request to have info needed empty dict.
+            config_path (str): Path of the configuration file to consider.
+            required_info (dict) : info used to generate the base folder architecture.
+                see get_required_info() request to have required info empty dict.
 
     """
-    return tree_base_builder.build_tree_base(path, info_needed)
+    tree_base_builder.build_tree_base(config_path, required_info)

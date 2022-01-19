@@ -1,2 +1,2 @@
-from .api import config, tree, auto_arbo
+from .api import config_folders, tree, auto_arbo
 

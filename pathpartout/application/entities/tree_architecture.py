@@ -3,17 +3,16 @@ from .tree_node import TreeNode
 
 class TreeArchitecture:
     def __init__(self):
-        self.auto_arbo_info_names = None
+        self.config = None
         self.trees = set()
 
     @staticmethod
-    def build_from_config(architecture_config):
+    def build_from_config(config):
         tree_architecture = TreeArchitecture()
-        if not isinstance(architecture_config, dict):
-            raise ValueError("Path Partout: Architecture config should be dictionary")
-        tree_architecture.auto_arbo_info_names = architecture_config.pop("auto_arbo", None)
-        for tree_name, tree_content in architecture_config.items():
-            tree_architecture.trees.add(TreeNode.build_from_config(tree_name, tree_content))
+        tree_architecture.config = config
+        for tree in config.trees:
+            for tree_name, tree_content in tree.items():
+                tree_architecture.trees.add(TreeNode.build_from_config(tree_name, tree_content))
         return tree_architecture
 
     def find_label_filepath(self, label_name):

@@ -13,8 +13,10 @@ class TreePathPresenter(TreePresenter):
     def set_labels(self, labels):
         self._tree_path._available_labels = labels
 
-    def set_config_path(self, config_path):
-        self._tree_path._config_filepath = config_path
+    def set_config_info(self, name, path, aggregates):
+        self._tree_path._name = name
+        self._tree_path._config_filepath = path
+        self._tree_path._aggregates = aggregates
 
     @property
     def tree_path(self):
