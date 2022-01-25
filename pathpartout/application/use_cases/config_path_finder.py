@@ -29,7 +29,8 @@ def find_from_path(path):
             config_filepath = _search_valid_config_filepath(path, scopes)
             if config_filepath:
                 return config_filepath
-            raise ValueError("Path Partout: Given filepath doesn't have associate config file.")
+            raise ValueError("Path Partout: Given filepath doesn't have associate config file : {config_filepath}"
+                             .format(config_filepath=config_filepath))
 
 
 def _search_valid_config_filepath(path, scopes=None):

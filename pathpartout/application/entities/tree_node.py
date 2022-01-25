@@ -22,7 +22,7 @@ class TreeNode:
         return tree_node
 
     def get_all_path_labels(self, path_labels, parent_path_elements):
-        path_elements = parent_path_elements.copy()
+        path_elements = list(parent_path_elements)
         path_elements.append(self.name)
 
         for label in self.labels:
@@ -32,7 +32,7 @@ class TreeNode:
             child.get_all_path_labels(path_labels, path_elements)
 
     def find_label_filepath(self, label_name, parent_path_elements):
-        path_elements = parent_path_elements.copy()
+        path_elements = list(parent_path_elements)
         path_elements.append(self.name)
 
         label = self.get_label_from_name(label_name)
