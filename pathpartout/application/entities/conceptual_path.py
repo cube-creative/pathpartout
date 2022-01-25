@@ -2,9 +2,9 @@ import re
 
 
 class ConceptualPath:
-    parse_info_regex = re.compile("\{\{([\w]+)\??:?[\w]*\}\}") # {{variable_name[?:number]}}
-    extract_regex = re.compile("\{\{([\w]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
-    fill_regex = re.compile("\{\{([\w]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
+    parse_info_regex = re.compile("\{\{([\w-]+)\??:?[\w]*\}\}") # {{variable_name[?:number]}}
+    extract_regex = re.compile("\{\{([\w-]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
+    fill_regex = re.compile("\{\{([\w-]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
 
     def __init__(self, path_elements):
         self.path_elements = path_elements or list()
@@ -39,7 +39,7 @@ class ConceptualPath:
         re_element = conceptual_element
         for var in variable_found:
             occurrence = "{" + var[2] + "}" if var[2] else "*" if var[1] else "+"
-            re_element = self.extract_regex.sub("([A-Za-z0-9_]" + occurrence + ")", re_element, count=1)
+            re_element = self.extract_regex.sub("([A-Za-z0-9_-]" + occurrence + ")", re_element, count=1)
 
         element_pattern = re.compile(re_element)
         match = element_pattern.fullmatch(concrete_element)
