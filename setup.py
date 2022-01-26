@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 NAME = 'pathpartout'
-VERSION = '1.1.0'
+VERSION = '1.1.1'
 DESCRIPTION = 'Path Parser'
 AUTHOR = 'Cube Creative'
 AUTHOR_EMAIL = 'development@cube-creative.com'

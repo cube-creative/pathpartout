@@ -96,7 +96,7 @@ class TreePath:
                     aggregate_name=name
                 )
             )
-        return aggregate.get(name, self.config_filepath, self.info)
+        return aggregate.get(self.config_filepath, name, self.info)
 
     def fill_with_label(self, label_name, path):
         """Fill new data in the TreePath thanks to the given label path.
