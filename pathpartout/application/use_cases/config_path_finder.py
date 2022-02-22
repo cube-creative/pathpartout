@@ -6,8 +6,13 @@ CONFIG_FILE_NAME = "path_partout.conf"
 
 
 def find_by_search_term(search_term, value):
-    values = config_folders_reader.get_config_paths_by_search_term_values(search_term)
-    return values.get(value, None)
+    search_term_values = config_folders_reader.get_config_paths_by_search_term_values(search_term)
+
+    for project_name, config_folder_path in search_term_values.items():
+        if project_name.lower() == value.lower():
+            return config_folder_path
+
+    return None
 
 
 def find_by_name(name):
