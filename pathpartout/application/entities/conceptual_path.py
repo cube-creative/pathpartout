@@ -58,7 +58,7 @@ class ConceptualPath:
     def fill(self, info):
         concept_path = "/".join(self.path_elements)
         variables_found = self.fill_regex.findall(concept_path)
-        missing_variables = set([var[0] for var in variables_found if not info.get(var[0])])
+        missing_variables = set([var[0] for var in variables_found if not info.get(var[0]) and not var[1]])
         if missing_variables:
             raise ValueError("Path Partout: Missing info to found label path : {missing_variables}".format(
                 missing_variables=','.join(missing_variables)
