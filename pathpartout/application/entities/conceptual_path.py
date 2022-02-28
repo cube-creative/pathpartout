@@ -68,8 +68,8 @@ class ConceptualPath:
 
         if missing_variables:
             raise ValueError("Path Partout: Missing info to found label path : {missing_variables} \n"
-                             "Path: {concept_path} \n"
-                             "Config Path : {config_filepath}".format(
+                             "  Path: {concept_path} \n"
+                             "  Config Path : {config_filepath}".format(
                                 missing_variables=', '.join(missing_variables),
                                 concept_path=concept_path,
                                 config_filepath=config_filepath
