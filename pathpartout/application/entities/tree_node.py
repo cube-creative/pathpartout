@@ -51,15 +51,15 @@ class TreeNode:
                 return label
         return None
 
-    def get_all_filled_paths_with_given_info(self, paths, parent_path, info):
+    def get_all_filled_paths_with_given_info(self, paths, parent_path, info, config_path):
         node_path = parent_path + [self.name]
         if not ConceptualPath(node_path).contains_info_needed(info):
-            paths.append(ConceptualPath(parent_path).fill(info))
+            paths.append(ConceptualPath(parent_path).fill(info, config_path))
             return
 
         if not self.children:
-            paths.append(ConceptualPath(node_path).fill(info))
+            paths.append(ConceptualPath(node_path).fill(info, config_path))
             return
 
         for child in self.children:
-            child.get_all_filled_paths_with_given_info(paths, node_path, info)
+            child.get_all_filled_paths_with_given_info(paths, node_path, info, config_path)

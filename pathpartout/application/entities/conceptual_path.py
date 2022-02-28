@@ -55,7 +55,7 @@ class ConceptualPath:
             new_info = match.group(i+1)
             info[var[0]] = new_info if not is_number else int(new_info)
 
-    def fill(self, info):
+    def fill(self, info, config_filepath):
         concept_path = "/".join(self.path_elements)
         variables_found = self.fill_regex.findall(concept_path)
         missing_variables = set()
@@ -67,9 +67,14 @@ class ConceptualPath:
             missing_variables.add(info_name)
 
         if missing_variables:
-            raise ValueError("Path Partout: Missing info to found label path : {missing_variables}".format(
-                missing_variables=','.join(missing_variables)
-            ))
+            raise ValueError("Path Partout: Missing info to found label path : {missing_variables} \n"
+                             "  Path: {concept_path} \n"
+                             "  Config Path : {config_filepath}".format(
+                                missing_variables=', '.join(missing_variables),
+                                concept_path=concept_path,
+                                config_filepath=config_filepath
+                                )
+                             )
 
         path = concept_path
         for var in variables_found:
