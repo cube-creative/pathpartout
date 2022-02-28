@@ -12,4 +12,4 @@ def get_from_config(name, config_path, info):
                 config_path=config.filepath
             )
         )
-    return ConceptualPath([config.aggregates[name]]).fill(info)
+    return ConceptualPath([config.aggregates[name]]).fill(info, config_path)

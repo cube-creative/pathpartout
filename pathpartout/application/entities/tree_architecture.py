@@ -30,5 +30,5 @@ class TreeArchitecture:
     def get_all_filled_paths_with_given_info(self, info):
         paths = list()
         for tree in self.trees:
-            tree.get_all_filled_paths_with_given_info(paths, list(), info)
+            tree.get_all_filled_paths_with_given_info(paths, list(), info, self.config.filepath)
         return list(set(paths))
