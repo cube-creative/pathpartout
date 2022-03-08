@@ -86,3 +86,45 @@ def get_from_shot_working_filepath(filepath):
     tree_path_presenter = TreePathPresenter()
     tree_builder.build_from_label(tree_path_presenter, "shot_working_file", filepath.lower())
     return tree_path_presenter.tree_path
+
+
+def get_from_labels(labels, path):
+    """Find config associated to the given path and find the label matching with the path.
+
+    Get a TreePath object with info and labels relative to it.
+    This request return a Model-Presenter TreePath, with many method to interact with the api.
+    See TreePath definition for more information.
+
+    Args:
+        labels (list(str)): List of labels that potentially match with given path.
+        path (str): The path corresponding potentially with one of given label.
+
+    Returns:
+        TreePath corresponding to the config file found and the given information.
+
+    """
+    if not path:
+        raise ValueError("Path Partout: get_from_labels need path argument")
+
+    tree_path_presenter = TreePathPresenter()
+    tree_builder.build_from_labels(tree_path_presenter, labels, path.lower())
+    return tree_path_presenter.tree_path
+
+
+def is_label_matching_path(label, path):
+    """Return True if given label match with given path.
+
+    Args:
+        label (str): The label name.
+        path (str): Path that could match with label.
+
+    Returns:
+        bool: True is label match with path, else False
+
+    """
+    try:
+        tree_path_presenter = TreePathPresenter()
+        tree_builder.build_from_label(tree_path_presenter, label, path.lower())
+        return True
+    except Exception as e:
+        return False

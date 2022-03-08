@@ -293,6 +293,21 @@ print(tree_path.get_label_path("shot_working_file"))
 Output: 'P:\Pfffirates_Serie\projet\episode\e0143_surgonflette\shot\s005\p016\clean\wip\e0143_s005_p016_clean_v002.blend'
 ```
 
+### Récupérer des informations d'un working file, sans savoir si c'est un shot ou un asset
+Il n'y a pas les mêmes chemins et donc les mêmes labels pour traiter le chemin d'un fichier de travail pour un shot et 
+pour un asset : `shot_working_file` et `asset_working_file`.
+
+On peut tester si le chemin match le label : 
+```python
+is_shot = pathpartout.tree.is_label_matching_path("shot_working_file", my_path)
+print(is_shot) # true if shot path, false if asset path
+```
+
+Ou on peut directement demander de matcher indifféremment le chemin avec l'un des deux labels.
+```python
+tree = pathpartout.tree.get_from_labels(["shot_working_file", "asset_working_file"], my_path)
+```
+
 ## Auto arbo
 Path Partout est également capable de générer la base de l'arborescence de dossiers d'un projet, c'est à dire les 
 dossiers principaux qui ne sont pas liés à des épisodes ou assets spécifiques.
