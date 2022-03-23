@@ -41,9 +41,9 @@ class ConceptualPath:
             occurrence = "{" + var[2] + "}" if var[2] else "*" if var[1] else "+"
             re_element = self.extract_regex.sub("([A-Za-z0-9_-]" + occurrence + ")", re_element, count=1)
 
-        element_pattern = re.compile(re_element)
-        match = element_pattern.fullmatch(concrete_element)
-        if not match:
+        element_pattern = re.compile("(?:" + re_element + r")\Z")
+        match = element_pattern.match(concrete_element)
+        if match is None:
             raise ValueError(
                 "Path Partout: Given filepath doesn't match the label path in the config file."
                 "\n\tconcrete_element: {} doesn't match conceptual element: {}".format(concrete_element,
