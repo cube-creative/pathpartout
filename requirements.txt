@@ -1,1 +1,1 @@
-PyYAML>=6,<7
+PyYAML>=5,<7
