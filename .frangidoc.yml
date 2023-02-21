@@ -1,5 +1,0 @@
-title: Template - Pip installable
-exclude:
-  - setup.py
-  - pathpartout/__init__.py
-
