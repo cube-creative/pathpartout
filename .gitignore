@@ -4,6 +4,9 @@ __pycache__/
 
 /.idea
 .coverage
-
+*.egg-info
+.vscode/**
 
 Thumbs.db
+venv/**
+.env
