@@ -24,7 +24,11 @@ class ConceptualPath:
 
     def extract(self, concrete_filepath):
         concrete_filepath = concrete_filepath.replace('\\', '/')
-        concrete_filepath_elements = concrete_filepath.split('/')
+        # TODO: Ugly fix, remove this
+        # Ignore root 
+        root = self.path_elements[0]
+        concrete_filepath_elements = [element for element in  concrete_filepath.replace(root, '').split('/') if element != '']
+        concrete_filepath_elements.insert(0, root)
 
         if len(concrete_filepath_elements) != len(self.path_elements):
             raise ValueError("Path Partout: Given filepath doesn't match the label path in the config file.")
@@ -35,6 +39,7 @@ class ConceptualPath:
         return info
 
     def extract_from_path_element(self, concrete_element, conceptual_element, info):
+        # TODO: Insert root here instead of the reader ?
         variable_found = self.extract_regex.findall(conceptual_element)
         re_element = conceptual_element
         for var in variable_found:

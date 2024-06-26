@@ -1,3 +1,6 @@
+import os
+import re
+from typing import Optional
 import yaml
 import logging
 from pathpartout.application.entities import Configuration
@@ -47,10 +50,51 @@ def _resolve_links(config, config_data):
         config.extend_with_linked_data(linked_config_data)
 
 
+ROOT_MATCHER = re.compile("\{\{root:([\w]+)*\}\}")
+
+
+def _get_platform_roots()->Optional[list|None]:
+    """ Get the platform roots from the environment variable PATH_PARTOUT_ROOTS
+
+    Returns:
+        list: list of dictionnary with root label and path else None
+    """ 
+    plateform_roots = os.environ.get('PATH_PARTOUT_ROOTS', None)
+    if not plateform_roots:
+        return None
+    plaform_roots_regex = re.compile("(?P<label>[a-zA-Z]+)=(?P<path>[^&]+)")
+    
+    return {match.groupdict().get('label'):match.groupdict().get('path') for match in plaform_roots_regex.finditer(plateform_roots)}
+
+
+def _resolve_roots(config_data):
+    platform_roots = _get_platform_roots()
+    
+    # Resolve scopes
+    for index, scope in enumerate(config_data.get("scopes")):
+        match = ROOT_MATCHER.match(scope)
+        if match:
+            root_path = platform_roots.get(match.group(1))
+            config_data['scopes'][index] = scope.replace("{{"+f"root:{match.group(1)}"+"}}", root_path)
+
+    # Resolve trees
+    # TODO: Use this in concepual path instead ?
+    for tree_index, tree in enumerate(config_data.get("trees")):
+        tree_root = next(iter(tree))
+        tree_content = tree.get(tree_root)
+        match = ROOT_MATCHER.match(tree_root)
+        if match:
+            config_data['trees'][tree_index] = {platform_roots.get(match.group(1)) : tree_content}
+
+
 def _open_config_file(config_filepath):
     try:
         with open(config_filepath, "r") as config_stream:
-            return yaml.safe_load(config_stream)
+            # TODO: An idea, use Yaml builtin functions
+            config = yaml.safe_load(config_stream)
+            
+            _resolve_roots(config)
+            return config
     except Exception as e:
         logging.warning(e)
         return None

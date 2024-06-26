@@ -31,7 +31,11 @@ def find_from_path(path):
 
         path = os.path.dirname(path)
         if _is_file_system_root(path):
-            config_filepath = _search_valid_config_filepath(path, scopes)
+            # Test if we have a drive else use the path (fix Unix/Dos root path handling)
+            # eg. handle C:/ or / or //host/path
+            # TODO: find a better way to handle this
+            drive, _ = os.path.splitdrive(path)
+            config_filepath = _search_valid_config_filepath(drive if drive else path, scopes)
             if config_filepath:
                 return config_filepath
             raise ValueError("Path Partout: Given filepath doesn't have associate config file : {config_filepath}"
