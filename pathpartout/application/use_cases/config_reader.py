@@ -1,6 +1,5 @@
 import os
 import re
-from typing import Optional
 import yaml
 import logging
 from pathpartout.application.entities import Configuration
@@ -53,7 +52,7 @@ def _resolve_links(config, config_data):
 ROOT_MATCHER = re.compile("\{\{root:([\w]+)*\}\}")
 
 
-def _get_platform_roots()->Optional[list|None]:
+def _get_platform_roots():
     """ Get the platform roots from the environment variable PATH_PARTOUT_ROOTS
 
     Returns:
