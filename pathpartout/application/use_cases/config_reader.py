@@ -73,8 +73,12 @@ def _resolve_roots(config_data):
     for index, scope in enumerate(config_data.get("scopes")):
         match = ROOT_MATCHER.match(scope)
         if match:
-            root_path = platform_roots.get(match.group(1))
-            config_data['scopes'][index] = scope.replace("{{"+f"root:{match.group(1)}"+"}}", root_path)
+            root_label = match.group(1)
+            root_path = platform_roots.get(root_label)
+            if root_path is None:
+                raise ValueError(f"Root label {root_label} not defined (set it in PATH_PARTOUT_ROOTS environment variable)")
+            else:
+                config_data['scopes'][index] = scope.replace("{{"+f"root:{root_label}"+"}}", root_path)
 
     # Resolve trees
     # TODO: Use this in concepual path instead ?

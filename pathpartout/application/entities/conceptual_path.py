@@ -26,9 +26,12 @@ class ConceptualPath:
         concrete_filepath = concrete_filepath.replace('\\', '/')
         # TODO: Ugly fix, remove this
         # Ignore root 
-        root = self.path_elements[0]
-        concrete_filepath_elements = [element for element in  concrete_filepath.replace(root, '').split('/') if element != '']
-        concrete_filepath_elements.insert(0, root)
+        if len(self.path_elements)>1:
+            root = self.path_elements[0]
+            concrete_filepath_elements = [element for element in  concrete_filepath.replace(root, '').split('/') if element != '']
+            concrete_filepath_elements.insert(0, root)
+        else:
+            concrete_filepath_elements = concrete_filepath.split('/') 
 
         if len(concrete_filepath_elements) != len(self.path_elements):
             raise ValueError("Path Partout: Given filepath doesn't match the label path in the config file.")
