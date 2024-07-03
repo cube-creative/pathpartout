@@ -1,12 +1,43 @@
+import os
 import re
+
+
+def _get_platform_roots():
+    """ Get the platform roots from the environment variable PATH_PARTOUT_ROOTS
+
+    Returns:
+        list: list of dictionnary with root label and path else None
+    """ 
+    plateform_roots = os.environ.get('PATH_PARTOUT_ROOTS', None)
+    if not plateform_roots:
+        return None
+    plaform_roots_regex = re.compile("(?P<label>[^=&]+)=(?P<path>[^=&]+)")
+    
+    return {match.groupdict().get('label'):match.groupdict().get('path') for match in plaform_roots_regex.finditer(plateform_roots)}
 
 
 class ConceptualPath:
     parse_info_regex = re.compile("\{\{([\w-]+)\??:?[\w]*\}\}") # {{variable_name[?:number]}}
     extract_regex = re.compile("\{\{([\w-]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
     fill_regex = re.compile("\{\{([\w-]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
+    root_regex = re.compile("\{\{root:([\w]+)*\}\}") # {{root:root_name[?]}}
 
-    def __init__(self, path_elements):
+    def __init__(self, path_elements: list):
+        root_element = path_elements[0] if len(path_elements) > 1 else None
+        if root_element is not None:
+            match_root_variable = self.root_regex.match(root_element)
+            if match_root_variable:
+                platform_roots = _get_platform_roots()
+                root_label = match_root_variable.group(1)
+                # Replace root 
+                root_path = platform_roots.get(root_label)
+                patched_root = root_element.replace("{{"+f"root:{root_label}"+"}}", root_path)
+                # Remove root
+                path_elements.remove(root_element)
+                
+                for element in reversed(patched_root.split('/')):
+                    path_elements.insert(0, element)
+
         self.path_elements = path_elements or list()
 
     @staticmethod
@@ -26,12 +57,12 @@ class ConceptualPath:
         concrete_filepath = concrete_filepath.replace('\\', '/')
         # TODO: Ugly fix, remove this
         # Ignore root 
-        if len(self.path_elements)>1:
-            root = self.path_elements[0]
-            concrete_filepath_elements = [element for element in  concrete_filepath.replace(root, '').split('/') if element != '']
-            concrete_filepath_elements.insert(0, root)
-        else:
-            concrete_filepath_elements = concrete_filepath.split('/') 
+        # if len(self.path_elements)>1:
+        #     root = self.path_elements[0]
+        #     concrete_filepath_elements = [element for element in  concrete_filepath.replace(root, '').split('/') if element != '']
+        #     concrete_filepath_elements.insert(0, root)
+        # else:
+        concrete_filepath_elements = concrete_filepath.split('/') 
 
         if len(concrete_filepath_elements) != len(self.path_elements):
             raise ValueError("Path Partout: Given filepath doesn't match the label path in the config file.")
