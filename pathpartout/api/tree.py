@@ -18,7 +18,7 @@ def get_from_config(config_filepath):
         raise ValueError("Path Partout: get_from_config need config_filepath argument")
 
     tree_path_presenter = TreePathPresenter()
-    tree_builder.build_from_config(tree_path_presenter, config_filepath.lower())
+    tree_builder.build_from_config(tree_path_presenter, config_filepath)
     return tree_path_presenter.tree_path
 
 
@@ -39,7 +39,7 @@ def get_from_path(path):
         raise ValueError("Path Partout: get_from_path need path argument")
 
     tree_path_presenter = TreePathPresenter()
-    tree_builder.build_from_path(tree_path_presenter, path.lower())
+    tree_builder.build_from_path(tree_path_presenter, path)
     return tree_path_presenter.tree_path
 
 
@@ -63,7 +63,7 @@ def get_from_label(label_name, path):
         raise ValueError("Path Partout: get_from_label need path argument")
 
     tree_path_presenter = TreePathPresenter()
-    tree_builder.build_from_label(tree_path_presenter, label_name.lower(), path.lower())
+    tree_builder.build_from_label(tree_path_presenter, label_name.lower(), path)
     return tree_path_presenter.tree_path
 
 
@@ -84,7 +84,7 @@ def get_from_shot_working_filepath(filepath):
         raise ValueError("Path Partout: get_from_shot_working_filepath need filepath argument")
 
     tree_path_presenter = TreePathPresenter()
-    tree_builder.build_from_label(tree_path_presenter, "shot_working_file", filepath.lower())
+    tree_builder.build_from_label(tree_path_presenter, "shot_working_file", filepath)
     return tree_path_presenter.tree_path
 
 
@@ -107,7 +107,7 @@ def get_from_labels(labels, path):
         raise ValueError("Path Partout: get_from_labels need path argument")
 
     tree_path_presenter = TreePathPresenter()
-    tree_builder.build_from_labels(tree_path_presenter, labels, path.lower())
+    tree_builder.build_from_labels(tree_path_presenter, labels, path)
     return tree_path_presenter.tree_path
 
 
@@ -124,7 +124,7 @@ def is_label_matching_path(label, path):
     """
     try:
         tree_path_presenter = TreePathPresenter()
-        tree_builder.build_from_label(tree_path_presenter, label, path.lower())
+        tree_builder.build_from_label(tree_path_presenter, label, path)
         return True
     except Exception as e:
         return False
