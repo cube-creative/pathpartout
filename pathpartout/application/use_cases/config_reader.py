@@ -82,12 +82,12 @@ def _resolve_roots(config_data):
 
     # Resolve trees
     # TODO: Use this in concepual path instead ?
-    # for tree_index, tree in enumerate(config_data.get("trees")):
-    #     tree_root = next(iter(tree))
-    #     tree_content = tree.get(tree_root)
-    #     match = ROOT_MATCHER.match(tree_root)
-    #     if match:
-    #         config_data['trees'][tree_index] = {platform_roots.get(match.group(1)) : tree_content}
+    for tree_index, tree in enumerate(config_data.get("trees")):
+        tree_root = next(iter(tree))
+        tree_content = tree.get(tree_root)
+        match = ROOT_MATCHER.match(tree_root)
+        if match:
+            config_data['trees'][tree_index] = {platform_roots.get(match.group(1)) : tree_content}
 
 
 def _open_config_file(config_filepath):
