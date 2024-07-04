@@ -81,7 +81,6 @@ def _resolve_roots(config_data):
                 config_data['scopes'][index] = scope.replace("{{"+f"root:{root_label}"+"}}", root_path)
 
     # Resolve trees
-    # TODO: Use this in concepual path instead ?
     for tree_index, tree in enumerate(config_data.get("trees")):
         tree_root = next(iter(tree))
         tree_content = tree.get(tree_root)

@@ -20,24 +20,8 @@ class ConceptualPath:
     parse_info_regex = re.compile("\{\{([\w-]+)\??:?[\w]*\}\}") # {{variable_name[?:number]}}
     extract_regex = re.compile("\{\{([\w-]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
     fill_regex = re.compile("\{\{([\w-]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
-    root_regex = re.compile("\{\{root:([\w]+)*\}\}") # {{root:root_name[?]}}
 
     def __init__(self, path_elements: list):
-        # root_element = path_elements[0] if len(path_elements) > 1 else None
-        # if root_element is not None:
-        #     match_root_variable = self.root_regex.match(root_element)
-        #     if match_root_variable:
-        #         platform_roots = _get_platform_roots()
-        #         root_label = match_root_variable.group(1)
-        #         # Replace root 
-        #         root_path = platform_roots.get(root_label)
-        #         patched_root = root_element.replace("{{"+f"root:{root_label}"+"}}", root_path)
-        #         # Remove root
-        #         path_elements.remove(root_element)
-                
-        #         for element in reversed(patched_root.split('/')):
-        #             path_elements.insert(0, element)
-
         self.path_elements = path_elements or list()
 
     @staticmethod
@@ -55,16 +39,12 @@ class ConceptualPath:
 
     def extract(self, concrete_filepath):
         concrete_filepath = concrete_filepath.replace('\\', '/')
-        # TODO: Ugly fix, remove this
-        # Ignore root 
-        if len(self.path_elements)>1:
-            root = self.path_elements[0]
-            insensitive_root = re.compile(re.escape(root), re.IGNORECASE)
-            concrete_filepath_wihtout_root = insensitive_root.sub('', concrete_filepath)
-            concrete_filepath_elements = [element for element in  concrete_filepath_wihtout_root.split('/') if element != '']
-            concrete_filepath_elements.insert(0, root)
-        else:
-            concrete_filepath_elements = concrete_filepath.split('/') 
+
+        root = self.path_elements[0]
+        insensitive_root = re.compile(re.escape(root))
+        concrete_filepath_wihtout_root = insensitive_root.sub('', concrete_filepath)
+        concrete_filepath_elements = [element for element in  concrete_filepath_wihtout_root.split('/') if element != '']
+        concrete_filepath_elements.insert(0, root)
 
         if len(concrete_filepath_elements) != len(self.path_elements):
             raise ValueError("Path Partout: Given filepath doesn't match the label path in the config file.")
@@ -75,7 +55,6 @@ class ConceptualPath:
         return info
 
     def extract_from_path_element(self, concrete_element, conceptual_element, info):
-        # TODO: Insert root here instead of the reader ?
         variable_found = self.extract_regex.findall(conceptual_element)
         re_element = conceptual_element
         for var in variable_found:
