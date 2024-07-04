@@ -47,7 +47,7 @@ class ConceptualPath:
         concrete_filepath_elements.insert(0, root)
 
         if len(concrete_filepath_elements) != len(self.path_elements):
-            raise ValueError("Path Partout: Given filepath doesn't match the label path in the config file.")
+            raise ValueError(f"Path Partout: Given filepath doesn't match the label path in the config file. {concrete_filepath_elements} vs {self.path_elements}")
 
         info = dict()
         for i, element in enumerate(concrete_filepath_elements):
