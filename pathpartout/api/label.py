@@ -28,4 +28,4 @@ def get_info_from_label(config_filepath, label, path):
         dict(str, int): info extracted from the path.
 
     """
-    return info_getter.get_from_label(config_filepath, label, path.lower())
+    return info_getter.get_from_label(config_filepath, label, path)
