@@ -4,6 +4,7 @@ import yaml
 import logging
 from pathpartout.application.entities import Configuration
 
+PLATFORM_ROOT_VARIABLE_REGEX = re.compile("\{\{root:([\w]+)*\}\}")
 
 def read_from_filepath(config_filepath):
     config_data = _open_config_file(config_filepath)
@@ -49,9 +50,6 @@ def _resolve_links(config, config_data):
         config.extend_with_linked_data(linked_config_data)
 
 
-ROOT_MATCHER = re.compile("\{\{root:([\w]+)*\}\}")
-
-
 def _get_platform_roots():
     """ Get the platform roots from the environment variable PATH_PARTOUT_ROOTS
 
@@ -66,36 +64,45 @@ def _get_platform_roots():
     return {match.groupdict().get('label'):match.groupdict().get('path') for match in plaform_roots_regex.finditer(plateform_roots)}
 
 
-def _resolve_roots(config_data):
+def _resolve_root(path: str, platform_roots: dict):
+    """ Resolve platform root in the path use
+    """
+    match = PLATFORM_ROOT_VARIABLE_REGEX.match(path)
+    if match:
+        root_label = match.group(1)
+        root_path = platform_roots.get(root_label)
+        if root_path is None:
+            raise ValueError(f"Root label {root_label} not defined (set it in PATH_PARTOUT_ROOTS environment variable)")
+        return path.replace("{{"+f"root:{root_label}"+"}}", root_path)
+    else:
+        return None
+
+
+def _resolve_configuration_roots(config_data):
     platform_roots = _get_platform_roots()
     
     # Resolve scopes
     for index, scope in enumerate(config_data.get("scopes")):
-        match = ROOT_MATCHER.match(scope)
-        if match:
-            root_label = match.group(1)
-            root_path = platform_roots.get(root_label)
-            if root_path is None:
-                raise ValueError(f"Root label {root_label} not defined (set it in PATH_PARTOUT_ROOTS environment variable)")
-            else:
-                config_data['scopes'][index] = scope.replace("{{"+f"root:{root_label}"+"}}", root_path)
+        resolved_root = _resolve_root(scope, platform_roots)
+        if resolved_root:
+            config_data['scopes'][index] = resolved_root
 
     # Resolve trees
     for tree_index, tree in enumerate(config_data.get("trees")):
         tree_root = next(iter(tree))
-        tree_content = tree.get(tree_root)
-        match = ROOT_MATCHER.match(tree_root)
-        if match:
-            config_data['trees'][tree_index] = {platform_roots.get(match.group(1)) : tree_content}
+        resolved_root = _resolve_root(tree_root, platform_roots)
+        if resolved_root:
+            tree_content = tree.get(tree_root)
+            config_data['trees'][tree_index] = {resolved_root : tree_content}
 
 
 def _open_config_file(config_filepath):
     try:
         with open(config_filepath, "r") as config_stream:
-            # TODO: An idea, use Yaml builtin functions
             config = yaml.safe_load(config_stream)
-            
-            _resolve_roots(config)
+
+            _resolve_configuration_roots(config)
+
             return config
     except Exception as e:
         logging.warning(e)
