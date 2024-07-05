@@ -102,7 +102,7 @@ def _resolve_tree_roots(config):
         tree_root = next(iter(tree))
         resolved_tree_root = _resolve_path_root(tree_root, platform_roots)
         if resolved_tree_root:
-            tree_root_element = [element for element in Path(resolved_tree_root).parts if element != ""] # resolved_tree_root.split('/')
+            tree_root_element = [*Path(resolved_tree_root).parts]
             # Expand root if needed
             root_patch =  tree.get(tree_root)
             for element in reversed(tree_root_element):
