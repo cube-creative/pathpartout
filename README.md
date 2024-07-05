@@ -76,7 +76,7 @@ est `ch`, mon `asset_name` est `mosquito001`, mon `step` est `modeling` et mon `
 je lui demande maintenant le chemin associé à mon label `pushed`, j'obtiendrai : 
 `P:\pfffirates_series\asset\ch\mosquito001\push\mosquito001_modeling.blend`
 
-A noté que l'outil Path Partout n'est pas sensible à la casse.
+A noter que l'outil Path Partout est sensible à la casse.
 
 #### Noms de variables avancés
 Pour des noms dossiers ou fichiers plus complexes, il est possible de fixer le nombre de caractères contenu dans une 
@@ -173,6 +173,41 @@ linked:
 Lorsque l'un des fichiers de configuration sera utilisé, les fichiers dépendants seront automatiquement inclues. Il est 
 important que les fichiers soient toujours mutuellement associés, pour évité tout conflit. De la même façon, les fichiers
 associés ne doivent jamais avoir de labels avec des noms identiques.
+
+
+### Configuration de racines de chemin par plateforme
+
+Dans le cas d'une production menée sur plusieurs plateforme (eg. Linux, Windows, etc.), les racines des chemins peuvent varier à la machine selon les points de montages et l'os.
+
+Pathpartout permet de configurer différentes racines via la variable d'environement `PATH_PARTOUT_ROOTS`. Cette variable doit faire apparaitre les labels des racines et leur valeur comme il suit: `Label1=Chemin1&Label2=Chemin2`.
+
+Sur windows on aurait par exemple: `PATH_PARTOUT_ROOTS: fabrication=D:&rendu=G:`
+
+Sur linux : `PATH_PARTOUT_ROOTS: fabrication=/mnt/d&rendu=/mnt/g`
+
+Une fois définie, il est possible de spécifier les racines pour les `scopes` et `trees` du fichier de configuration en suivant la synthaxe suivante: `{{root:Label1}}`.
+Cela donne par exemple:
+
+```yaml
+scopes:
+  - "{{root:fabrication}}"
+
+trees:
+  "{{root:fabrication}}":
+    "{{project_name}}":
+      "projet":
+        "asset":
+          "{{asset_type}}_{{asset_type_name}}":
+              ...
+        "episode":
+          ...
+  "{{root:rendu}}":
+          ...
+
+```
+
+Les racines serons interprétées au moment de la lecture de la configuration.
+
 
 ## Présentation de cas d'usages
 Une fois le ou les fichiers de configuration rédigés et positionnés dans la ou les structures de dossiers, il est 
