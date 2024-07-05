@@ -1,10 +1,10 @@
 import os
-from pathlib import Path
 import pathpartout
 from unittest import mock, TestCase, main
 
-SAMPLE_PROJECT_ROOT = Path(__file__).parent.as_posix()
-SAMPLE_PROJECT_NAME = 'Sample_Project'
+from tests import SAMPLE_PROJECT_NAME, SAMPLE_PROJECT_ROOT, SAMPLE_CONFIG
+
+
 @mock.patch.dict(
     os.environ,
     {
@@ -14,13 +14,12 @@ SAMPLE_PROJECT_NAME = 'Sample_Project'
 )
 class TestAutoArbo(TestCase):
     def test_generate_arbo(self):
-        config_filepath = Path(__file__).parent.joinpath('sample.conf').as_posix()
         required_info = {
             'project_name': SAMPLE_PROJECT_NAME,
         }
 
         pathpartout.auto_arbo.generate(
-            config_path=config_filepath,
+            config_path=SAMPLE_CONFIG,
             required_info=required_info
         )
 
