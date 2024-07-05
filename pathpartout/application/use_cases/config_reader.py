@@ -1,17 +1,35 @@
 import os
+from pathlib import Path
 import re
 import yaml
 import logging
 from pathpartout.application.entities import Configuration
 
-PLATFORM_ROOT_VARIABLE_REGEX = re.compile("\{\{root:([\w]+)*\}\}")
+PLATFORM_ROOT_CONF_REGEX = re.compile("\{\{root:([\w]+)*\}\}") # {{root:label[?]}}
+PLATFORM_ROOT_VARENV_REGEX = re.compile("(?P<label>[^=&]+)=(?P<path>[^=&]+)")
+
+
+def _get_platform_roots():
+    """ Get the platform roots from the environment variable PATH_PARTOUT_ROOTS
+
+    Returns:
+        list: list of dictionnary with root label and path else None
+    """ 
+    plateform_roots = os.environ.get('PATH_PARTOUT_ROOTS', None)
+    if not plateform_roots:
+        return None
+
+    return {match.groupdict().get('label'):match.groupdict().get('path') for match in PLATFORM_ROOT_VARENV_REGEX.finditer(plateform_roots)}
+
 
 def read_from_filepath(config_filepath):
     config_data = _open_config_file(config_filepath)
     if not _is_valid_config_data(config_data):
         raise ValueError("Config {config_filepath} has incorrect syntax.".format(config_filepath=config_filepath))
+    _resolve_scope_roots(config_data)
     config = Configuration(config_filepath, config_data)
     _resolve_links(config, config_data)
+    _resolve_tree_roots(config)
     return config
 
 
@@ -19,6 +37,7 @@ def read_scopes(config_filepath):
     config_data = _open_config_file(config_filepath)
     if not config_data:
         return list()
+    _resolve_scope_roots(config_data)
     return config_data.get("scopes", list())
 
 
@@ -50,24 +69,17 @@ def _resolve_links(config, config_data):
         config.extend_with_linked_data(linked_config_data)
 
 
-def _get_platform_roots():
-    """ Get the platform roots from the environment variable PATH_PARTOUT_ROOTS
+def _resolve_path_root(path: str, platform_roots: dict):
+    """ Resolve platform root in the path
+
+    Args:
+        path (str): The path to resolve
+        platform_roots (dict): The platform roots
 
     Returns:
-        list: list of dictionnary with root label and path else None
-    """ 
-    plateform_roots = os.environ.get('PATH_PARTOUT_ROOTS', None)
-    if not plateform_roots:
-        return None
-    plaform_roots_regex = re.compile("(?P<label>[^=&]+)=(?P<path>[^=&]+)")
-    
-    return {match.groupdict().get('label'):match.groupdict().get('path') for match in plaform_roots_regex.finditer(plateform_roots)}
-
-
-def _resolve_root(path: str, platform_roots: dict):
-    """ Resolve platform root in the path use
+        str: The path with resolved root or None if no root to resolve
     """
-    match = PLATFORM_ROOT_VARIABLE_REGEX.match(path)
+    match = PLATFORM_ROOT_CONF_REGEX.match(path)
     if match:
         root_label = match.group(1)
         root_path = platform_roots.get(root_label)
@@ -78,32 +90,40 @@ def _resolve_root(path: str, platform_roots: dict):
         return None
 
 
-def _resolve_configuration_roots(config_data):
-    platform_roots = _get_platform_roots()
-    
-    # Resolve scopes
-    for index, scope in enumerate(config_data.get("scopes")):
-        resolved_root = _resolve_root(scope, platform_roots)
-        if resolved_root:
-            config_data['scopes'][index] = resolved_root
+def _resolve_tree_roots(config):
+    """ Resolve trees's root by replacing the root label by the varenv value
 
-    # Resolve trees
-    for tree_index, tree in enumerate(config_data.get("trees")):
+    Args:
+        config (Configuration): The configuration to resolve
+    
+    """
+    platform_roots = _get_platform_roots()
+    for tree_index, tree in enumerate(config.trees):
         tree_root = next(iter(tree))
-        resolved_root = _resolve_root(tree_root, platform_roots)
-        if resolved_root:
-            tree_content = tree.get(tree_root)
-            config_data['trees'][tree_index] = {resolved_root : tree_content}
+        resolved_tree_root = _resolve_path_root(tree_root, platform_roots)
+        if resolved_tree_root:
+            tree_root_element = [element for element in Path(resolved_tree_root).parts if element != ""] # resolved_tree_root.split('/')
+            # Expand root if needed
+            root_patch =  tree.get(tree_root)
+            for element in reversed(tree_root_element):
+                root_patch = {element: root_patch}
+                
+            config.trees[tree_index] = root_patch
+
+
+def _resolve_scope_roots(config_data):
+    platform_roots = _get_platform_roots()
+    for index, scope in enumerate(config_data.get("scopes")):
+        resolved_scope_root = _resolve_path_root(scope, platform_roots)
+        if resolved_scope_root:
+            config_data['scopes'][index] = resolved_scope_root
+
 
 
 def _open_config_file(config_filepath):
     try:
         with open(config_filepath, "r") as config_stream:
-            config = yaml.safe_load(config_stream)
-
-            _resolve_configuration_roots(config)
-
-            return config
+            return yaml.safe_load(config_stream)
     except Exception as e:
         logging.warning(e)
         return None

@@ -63,7 +63,7 @@ def get_from_label(label_name, path):
         raise ValueError("Path Partout: get_from_label need path argument")
 
     tree_path_presenter = TreePathPresenter()
-    tree_builder.build_from_label(tree_path_presenter, label_name.lower(), path)
+    tree_builder.build_from_label(tree_path_presenter, label_name, path)
     return tree_path_presenter.tree_path
 
 

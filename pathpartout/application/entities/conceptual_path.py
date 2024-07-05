@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import re
 
 
@@ -38,14 +39,9 @@ class ConceptualPath:
         return info
 
     def extract(self, concrete_filepath):
-        concrete_filepath = concrete_filepath.replace('\\', '/')
-
-        root = self.path_elements[0]
-        insensitive_root = re.compile(re.escape(root))
-        concrete_filepath_wihtout_root = insensitive_root.sub('', concrete_filepath)
-        concrete_filepath_elements = [element for element in  concrete_filepath_wihtout_root.split('/') if element != '']
-        concrete_filepath_elements.insert(0, root)
-
+        # concrete_filepath = concrete_filepath.replace('\\', '/')
+        concrete_filepath_elements = [*Path(concrete_filepath).parts]
+    
         if len(concrete_filepath_elements) != len(self.path_elements):
             raise ValueError(f"Path Partout: Given filepath doesn't match the label path in the config file. {concrete_filepath_elements} vs {self.path_elements}")
 
@@ -61,8 +57,8 @@ class ConceptualPath:
             occurrence = "{" + var[2] + "}" if var[2] else "*" if var[1] else "+"
             re_element = self.extract_regex.sub("([A-Za-z0-9_-]" + occurrence + ")", re_element, count=1)
 
-        element_pattern = re.compile("(?:" + re_element + r")\Z")
-        match = element_pattern.match(concrete_element)
+        element_pattern = re.compile("(?:" + re_element.replace('\\','') + r")\Z")
+        match = element_pattern.match(concrete_element.replace('\\',''))
         if match is None:
             raise ValueError(
                 "Path Partout: Given filepath doesn't match the label path in the config file."
@@ -76,7 +72,7 @@ class ConceptualPath:
             info[var[0]] = new_info if not is_number else int(new_info)
 
     def fill(self, info, config_filepath):
-        concept_path = "/".join(self.path_elements)
+        concept_path = Path(self.path_elements[0]).joinpath('/'.join(self.path_elements[1:])).as_posix()
         variables_found = self.fill_regex.findall(concept_path)
         missing_variables = set()
         for var in variables_found:

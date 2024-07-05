@@ -44,7 +44,7 @@ def find_from_path(path):
 
 def _search_valid_config_filepath(path, scopes=None):
     scopes = scopes or dict()
-    config_filepath = scopes.get(path.lower(), None) or os.path.join(path, CONFIG_FILE_NAME).replace('\\', '/')
+    config_filepath = scopes.get(path, None) or os.path.join(path, CONFIG_FILE_NAME).replace('\\', '/')
     if os.path.isfile(config_filepath):
         if config_reader.is_valid_config_filepath(config_filepath):
             return config_filepath
