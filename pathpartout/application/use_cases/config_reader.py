@@ -1,8 +1,9 @@
 import yaml
 import logging
 from pathpartout.application.entities import Configuration
+from functools import cache
 
-
+@cache
 def read_from_filepath(config_filepath):
     config_data = _open_config_file(config_filepath)
     if not _is_valid_config_data(config_data):
@@ -11,28 +12,28 @@ def read_from_filepath(config_filepath):
     _resolve_links(config, config_data)
     return config
 
-
+@cache
 def read_scopes(config_filepath):
     config_data = _open_config_file(config_filepath)
     if not config_data:
         return list()
     return config_data.get("scopes", list())
 
-
+@cache
 def read_name(config_filepath):
     config_data = _open_config_file(config_filepath)
     if not config_data:
         return None
     return config_data.get("name", list())
 
-
+@cache
 def read_search_terms(config_filepath):
     config_data = _open_config_file(config_filepath)
     if not config_data:
         return dict()
     return config_data.get("search_terms", dict())
 
-
+@cache
 def is_valid_config_filepath(filepath):
     return _is_valid_config_data(_open_config_file(filepath))
 
