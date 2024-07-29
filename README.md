@@ -176,7 +176,7 @@ associés ne doivent jamais avoir de labels avec des noms identiques.
 
 ### Performances
 
-Pour les cas d'applications où de nombreux appels Pathpartout sont fait, les temps de lectures de la configuration pathpartout peuvent s'avérer problématique. Pour améliorer les performances il est possible d'activer la mise en cache de la configuration en définissant la variable d'environement `PATHPARTOUT_CONFIG_CACHE` à `true` (toute autre valeur désactivera le cache). **Ce cache sera supprimé au redémarrage de l'application, un changement de configuration nécessitera donc un redémarrage de l'application pour être pris en compte**. 
+Pour les cas d'applications où de nombreux appels Pathpartout sont fait, les temps de lectures de la configuration pathpartout peuvent s'avérer problématique. Pour améliorer les performances il est possible d'activer la mise en cache de la configuration en définissant la variable d'environement `PATHPARTOUT_ENABLE_CONF_CACHE` à `true` (toute autre valeur désactivera le cache). **Ce cache sera supprimé au redémarrage de l'application, un changement de configuration nécessitera donc un redémarrage de l'application pour être pris en compte**. 
 
 
 ## Présentation de cas d'usages
