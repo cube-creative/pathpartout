@@ -5,6 +5,12 @@ from functools import cache
 import os
 
 
+def _optional_cache(func):
+    if os.environ.get("PATHPARTOUT_ENABLE_CONF_CACHE", "false").lower() == "true":
+        return cache(func)
+    return func
+
+
 def read_from_filepath(config_filepath):
     config_data = _open_config_file(config_filepath)
     if not _is_valid_config_data(config_data):
@@ -49,7 +55,7 @@ def _resolve_links(config, config_data):
         config.extend_with_linked_data(linked_config_data)
 
 
-@cache if os.environ.get("PATHPARTOUT_ENABLE_CONF_CACHE", "false").lower() == "true" else lambda f: f
+@_optional_cache
 def _open_config_file(config_filepath):
     try:
         with open(config_filepath, "r") as config_stream:
