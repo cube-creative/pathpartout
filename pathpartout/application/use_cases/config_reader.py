@@ -1,13 +1,13 @@
 import yaml
 import logging
 from pathpartout.application.entities import Configuration
-from functools import cache
+from functools import lru_cache
 import os
 
 
 def _optional_cache(func):
     if os.environ.get("PATHPARTOUT_ENABLE_CONF_CACHE", "false").lower() == "true":
-        return cache(func)
+        return lru_cache(maxsize=None)(func)
     return func
 
 
