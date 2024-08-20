@@ -38,7 +38,7 @@ def get_config_paths_by_scopes():
     conf_scopes = dict()
     for filepath in conf_files_paths:
         for scope in config_reader.read_scopes(filepath):
-            conf_scopes[scope.lower()] = filepath
+            conf_scopes[scope] = filepath
     return conf_scopes
 
 

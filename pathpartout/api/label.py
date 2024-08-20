@@ -13,7 +13,7 @@ def find_label_path(config_filepath, label_name, info):
         str: filepath corresponding to the given label name.
 
     """
-    return path_finder.find_from_label(config_filepath, label_name.lower(), info)
+    return path_finder.find_from_label(config_filepath, label_name, info)
 
 
 def get_info_from_label(config_filepath, label, path):
@@ -28,4 +28,4 @@ def get_info_from_label(config_filepath, label, path):
         dict(str, int): info extracted from the path.
 
     """
-    return info_getter.get_from_label(config_filepath, label, path.lower())
+    return info_getter.get_from_label(config_filepath, label, path)

@@ -1,4 +1,20 @@
+import os
+from pathlib import Path
 import re
+
+
+def _get_platform_roots():
+    """ Get the platform roots from the environment variable PATH_PARTOUT_ROOTS
+
+    Returns:
+        list: list of dictionnary with root label and path else None
+    """ 
+    plateform_roots = os.environ.get('PATH_PARTOUT_ROOTS', None)
+    if not plateform_roots:
+        return None
+    plaform_roots_regex = re.compile("(?P<label>[^=&]+)=(?P<path>[^=&]+)")
+    
+    return {match.groupdict().get('label'):match.groupdict().get('path') for match in plaform_roots_regex.finditer(plateform_roots)}
 
 
 class ConceptualPath:
@@ -6,7 +22,7 @@ class ConceptualPath:
     extract_regex = re.compile("\{\{([\w-]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
     fill_regex = re.compile("\{\{([\w-]+)(\?)?:?([0-9]*)(d)?\}\}")  # {{variable_name[?][:number][d]}}
 
-    def __init__(self, path_elements):
+    def __init__(self, path_elements: list):
         self.path_elements = path_elements or list()
 
     @staticmethod
@@ -23,11 +39,11 @@ class ConceptualPath:
         return info
 
     def extract(self, concrete_filepath):
-        concrete_filepath = concrete_filepath.replace('\\', '/')
-        concrete_filepath_elements = concrete_filepath.split('/')
-
+        # concrete_filepath = concrete_filepath.replace('\\', '/')
+        concrete_filepath_elements = [*Path(concrete_filepath).parts]
+    
         if len(concrete_filepath_elements) != len(self.path_elements):
-            raise ValueError("Path Partout: Given filepath doesn't match the label path in the config file.")
+            raise ValueError(f"Path Partout: Given filepath doesn't match the label path in the config file. {concrete_filepath_elements} vs {self.path_elements}")
 
         info = dict()
         for i, element in enumerate(concrete_filepath_elements):
@@ -41,8 +57,8 @@ class ConceptualPath:
             occurrence = "{" + var[2] + "}" if var[2] else "*" if var[1] else "+"
             re_element = self.extract_regex.sub("([A-Za-z0-9_-]" + occurrence + ")", re_element, count=1)
 
-        element_pattern = re.compile("(?:" + re_element + r")\Z")
-        match = element_pattern.match(concrete_element)
+        element_pattern = re.compile("(?:" + re_element.replace('\\','') + r")\Z")
+        match = element_pattern.match(concrete_element.replace('\\',''))
         if match is None:
             raise ValueError(
                 "Path Partout: Given filepath doesn't match the label path in the config file."
@@ -56,7 +72,7 @@ class ConceptualPath:
             info[var[0]] = new_info if not is_number else int(new_info)
 
     def fill(self, info, config_filepath):
-        concept_path = "/".join(self.path_elements)
+        concept_path = Path(self.path_elements[0]).joinpath('/'.join(self.path_elements[1:])).as_posix()
         variables_found = self.fill_regex.findall(concept_path)
         missing_variables = set()
         for var in variables_found:

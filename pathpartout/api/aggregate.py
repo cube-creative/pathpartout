@@ -28,4 +28,4 @@ def get_info_from_aggregate(config_filepath, aggregate, value):
             dict(str, int): extracted info.
 
     """
-    return info_getter.get_from_aggregate(config_filepath, aggregate, value.lower())
+    return info_getter.get_from_aggregate(config_filepath, aggregate, value)
