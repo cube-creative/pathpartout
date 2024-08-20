@@ -127,58 +127,6 @@ def _resolve_scope_roots(config_data):
             config_data['scopes'][index] = resolved_scope_root
 
 
-
-def _resolve_path_root(path: str, platform_roots: dict):
-    """ Resolve platform root in the path
-
-    Args:
-        path (str): The path to resolve
-        platform_roots (dict): The platform roots
-
-    Returns:
-        str: The path with resolved root or None if no root to resolve
-    """
-    match = PLATFORM_ROOT_CONF_REGEX.match(path)
-    if match:
-        root_label = match.group(1)
-        root_path = platform_roots.get(root_label)
-        if root_path is None:
-            raise ValueError(f"Root label {root_label} not defined (set it in PATH_PARTOUT_ROOTS environment variable)")
-        return path.replace("{{"+f"root:{root_label}"+"}}", root_path)
-    else:
-        return None
-
-
-def _resolve_tree_roots(config):
-    """ Resolve trees's root by replacing the root label by the varenv value
-
-    Args:
-        config (Configuration): The configuration to resolve
-    
-    """
-    platform_roots = _get_platform_roots()
-    for tree_index, tree in enumerate(config.trees):
-        tree_root = next(iter(tree))
-        resolved_tree_root = _resolve_path_root(tree_root, platform_roots)
-        if resolved_tree_root:
-            tree_root_element = [*Path(resolved_tree_root).parts]
-            # Expand root if needed
-            root_patch =  tree.get(tree_root)
-            for element in reversed(tree_root_element):
-                root_patch = {element: root_patch}
-                
-            config.trees[tree_index] = root_patch
-
-
-def _resolve_scope_roots(config_data):
-    platform_roots = _get_platform_roots()
-    for index, scope in enumerate(config_data.get("scopes")):
-        resolved_scope_root = _resolve_path_root(scope, platform_roots)
-        if resolved_scope_root:
-            config_data['scopes'][index] = resolved_scope_root
-
-
-
 @_optional_cache
 def _open_config_file(config_filepath):
     try:
