@@ -12,11 +12,14 @@ Il répond particulièrement à deux besoins :
 ## Logique de fonctionnement
 
 ### Construction d'une structure pré-déterminée : `path_partout.conf`
+
 Pour pouvoir extraire les informations présentes dans un chemin, ou construire un chemin à partir d'informations, Path Partout a besoin de s'appuyer sur un fichier de
  configuration lui indiquant l'association à faire entre chemins et informations. Ce fichier doit être nommé `path_partout.conf`, et prend la forme d'un fichier au format YAML.
 
 #### Structure du fichier `path_partout.conf`
+
 La structure d'un fichier de configuration reprend la forme d'une arborescence de dossiers :
+
 ```yaml
 "p:":
   "{{project_name}}":
@@ -35,6 +38,7 @@ La structure d'un fichier de configuration reprend la forme d'une arborescence d
             "shot_{{shot_type?:2}}":
                 shot_working_file: "e{{season_number:2}}{{episode_number:2}}_s{{sequence_number:3}}_p{{shot_number:3}}_{{step}}_v{{version_number:3}}.{{working_file_extension}}"
 ```
+
 Chaque champ, dans cette structure, peut correspondre soit à un `Dossier`, soit à un `Label`.
 
 Un `Dossier` va conventionnellement être nommé entre guillemets, et contient toujours d'autres champs `Dossier`, et/ou `Label` à son tour. `"{{project_name}}"` désigne dans 'exemple ci-dessus un `Dossier`, contenant deux autres `Dossier`: `"asset"` et `"projet"`. Ces `Dossier` vont permettre de représenter une structure de dossiers liées à une organisation commune, comme celle des dossiers utilisés au sein d'un projet d'animation, par exemple.
@@ -46,6 +50,7 @@ La chaîne de caractères associée au `Label` correspond à un nom de fichier. 
 Attention, le fichier doit toujours décrire une structure de dossiers en partant de la racine du volume disque, désigné par la lettre sur laquelle le volume disque est monté (`p` dans l'exemple ci-dessus).
 
 #### Association chemins / informations
+
 Pour permettre l'association entre la structure de dossiers et des informations utiles, la configuration comprend un système de variables, qu'il est possible de spécifier comme ceux-ci : `{{my_variable}}`
 
 Les variables correspondent à des chaînes de caractères et peuvent contenir des lettres et des chiffres ainsi que le caractère underscore (`_`). Elles permettent de décrire conceptuellement le nom des dossiers et fichiers. Grace à elles, Path Partout pourra chercher à faire correspondre un chemin qui lui ait donnée avec ce jeu de variables, et ainsi associé certaines parties d'un nom de dossier/fichier à un nom de variable. Inversement, les variables permettront aussi de construire un chemin à partir de variables que l'on fournira au préalable. 
@@ -58,6 +63,7 @@ Inversement maintenant, si j'indique à Path Partout que mon `project_name` est 
 A noter que l'outil Path Partout est sensible à la casse.
 
 #### Noms de variables avancés
+
 Pour des noms dossiers ou fichiers plus complexes, il est possible de fixer le nombre de caractères contenu dans une variable avec : `{{my_variable:x}}`. `x` sera un nombre indiquant le nombre de caractères de la variable.
 
 Il est aussi possible de rendre la présence d'une variable facultative avec : `{{my_variable?}}`. Si la variable n'est pas fourni ou n'est pas présente dans le chemin fourni, cela n’empêchera pas la correspondance entre chemin et informations.
@@ -66,6 +72,7 @@ On peut à la fois rendre une variable facultative et limitée en taille, comme 
 
 
 ### Emplacement du fichier `path_partout.conf`
+
 Path Partout est un outil construit pour pouvoir fonctionner avec différentes structures de dossiers. En effet, en fonction des studios de production, ou simplement des projets, l'organisation des dossiers n'est pas nécessairement la même.
 
 Les fichiers de configuration peuvent donc être multiples en fonction des contextes. Pour identifier à quel fichier `path_partout.conf` l'outil doit se référer, lorsqu'on lui fourni un chemin, Path Partout va simplement chercher le fichier à l'emplacement du chemin fourni, puis dans ses différents dossiers parents. Il considérera le premier fichier de configuration ainsi trouvé.
@@ -77,6 +84,7 @@ Si aucun fichier de configuration n'est trouvé, une erreur est retournée.
 Un **seul fichier** de configuration est toujours considéré lors de ce processus. Même si plusieurs fichiers de configuration sont présents dans les dossiers parents, seul celui dans le dossier le plus éloigné de la racine du volume disque sera considéré.
 
 ### Configurer des dossiers de configuration
+
 Une autre possibilité permettant de rassembler ses fichiers de configuration au même endroit, est de définir des dossiers de configuration.
 
 Pour cela, il suffit de renseigner les dossiers voulus dans la variable d'environnement `PATH_PARTOUT_CONF_FOLDERS`. Exemple : `PATH_PARTOUT_CONF_FOLDERS = "C:/my/path/1/;C:/my/path/2/`. Il est également possible de renseigner ces chemins via l'API de Path Partout avec `pathpartout.config_folders.set_paths()`.
@@ -107,6 +115,7 @@ Vous pouvez ensuite retrouver le chemin de ce fichier de configuration via l'API
 
 
 ### Liaison de deux fichiers `path_partout.conf` (utilisation avancée)
+
 Il arrive que l'on souhaite considérer de façon unifiée, la structure de dossiers présente sur plusieurs volumes disques en même temps.
 Dans ce cas, pour permettre de retrouver les fichiers de configuration à partir d'un chemin, il est important d'avoir un fichier de configuration positionnés dans chaque volume disques.
 Il est toutefois possible de lier ces différents fichiers de configuration en ajoutant dans chaque fichier la liste des chemins vers les autres fichiers `path_partout.conf` associés dans le champs `linked` à la racine des documents YAML.
