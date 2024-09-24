@@ -34,6 +34,7 @@ setup(
     version=VERSION,
     description=DESCRIPTION,
     long_description=_long_description,
+    license='GPLv3',
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
     packages=find_packages(exclude=['tests']),

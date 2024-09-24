@@ -1,23 +1,23 @@
 # Path Partout
+## Introduction
 
-## Présentation
+Path Partout is a tool for manipulating information present in folder and file paths.
 
-Path Partout est un outil permettant de manipuler des informations présentes dans des chemins de dossiers et fichiers.
-
-Il répond particulièrement à deux besoins :
-    * Extraire des informations d'un chemin de fichier ou dossier appartenant à une structure pré-déterminée.
-    * Construire un chemin de fichier à partir d'un dictionnaire d'informations selon une structure pré-déterminée.
+It addresses two specific needs:
+  * Extracting information from a file or folder path belonging to a predetermined structure.
+  * Constructing a file path from a dictionary of information according to a predetermined structure.
 
 
-## Logique de fonctionnement
+## Functioning Logic
 
-### Construction d'une structure pré-déterminée : `path_partout.conf`
-Pour pouvoir extraire les informations présentes dans un chemin, ou construire un chemin à partir d'informations, 
-Path Partout a besoin de s'appuyer sur un fichier de configuration lui indiquant l'association à faire entre chemins 
-et informations. Ce fichier doit être nommé `path_partout.conf`, et prend la forme d'un fichier au format YAML.
+### Building a predetermined structure: `path_partout.conf`
 
-#### Structure du fichier `path_partout.conf`
-La structure d'un fichier de configuration reprend la forme d'une arborescence de dossiers :
+To be able to extract information from a path or construct a path from information, Path Partout relies on a configuration file that indicates the association between paths and information. This file must be named `path_partout.conf` and takes the form of a YAML file.
+
+#### Structure of the `path_partout.conf` file
+
+The structure of a configuration file follows the form of a folder hierarchy:
+
 ```yaml
 "p:":
   "{{project_name}}":
@@ -36,103 +36,70 @@ La structure d'un fichier de configuration reprend la forme d'une arborescence d
             "shot_{{shot_type?:2}}":
                 shot_working_file: "e{{season_number:2}}{{episode_number:2}}_s{{sequence_number:3}}_p{{shot_number:3}}_{{step}}_v{{version_number:3}}.{{working_file_extension}}"
 ```
-Chaque champ, dans cette structure, peut correspondre soit à un `Dossier`, soit à un `Label`.
 
-Un `Dossier` va conventionnellement être nommé entre guillemets, et contient toujours d'autres champs `Dossier`, et/ou 
-`Label` à son tour. `"{{project_name}}"` désigne dans l'exemple ci-dessus un `Dossier`, contenant deux autres `Dossier`: 
-`"asset"` et `"projet"`. 
-Ces `Dossier` vont permettre de représenter une structure de dossiers liées à une organisation commune, comme celle 
-des dossiers utilisés au sein d'un projet d'animation, par exemple.
+Each field in this structure can correspond to either a `Folder` or a `Label`.
 
-Un `Label` va conventionnellement être nommé sans guillemet, et contient toujours une chaîne de caractères.
-`pushed` est dans l'exemple ci-dessus un `Label`, il contient une chaîne de caractères. (Attention, c'est l'indentation 
-en YAML qui fait la différence entre le champ d'un sous-object, et une chaîne de caractères)
-Les `Label` vont être utilisés pour cibler des emplacements particuliers dans la structure de dossiers. Ils pourront ensuite 
-être exploités pour récupérer un chemin, ou des informations présentes dans ce chemin.
+A `Folder` is conventionally enclosed in quotes and always contains other `Folder` and/or `Label` fields. `"{{project_name}}"` in the example above represents a `Folder` containing two other `Folders`: `"asset"` and `"projet"`. These `Folders` are used to represent a folder structure related to a common organization, such as the folders used within an animation project, for example.
 
-La chaîne de caractères associée au `Label` correspond à un nom de fichier. Dans le cas où l'on souhaite qu'un `Label`
-cible le dossier qui le contient, on indique une chaîne de caractères vide.
+A `Label` is conventionally named without quotes and always contains a string of characters. `pushed` in the example above is a `Label` that contains a string of characters. Note that the indentation in YAML distinguishes between the field of a sub-object and a string of characters. Labels are used to target specific locations in the folder structure. They can then be used to retrieve a path or information present in that path.
 
-Attention, le fichier doit toujours décrire une structure de dossiers en partant de la racine du volume disque, désigné 
-par la lettre sur laquelle le volume disque est monté (`p` dans l'exemple ci-dessus).
+The string of characters associated with the `Label` corresponds to a file name. If we want a `Label` to target the folder that contains it, we specify an empty string.
 
-#### Association chemins / informations
-Pour permettre l'association entre la structure de dossiers et des informations utiles, la configuration comprend un 
-système de variables, qu'il est possible de spécifier comme ceux-ci : `{{my_variable}}`
+Note that the file must always describe a folder structure starting from the root of the disk volume, designated by the letter on which the disk volume is mounted (`p` in the example above).
 
-Les variables correspondent à des chaînes de caractères et peuvent contenir des lettres et des chiffres ainsi que le 
-caractère underscore (`_`). Elles permettent de décrire conceptuellement le nom des dossiers et fichiers. Grace à elles,
-Path Partout pourra chercher à faire correspondre un chemin qui lui ait donnée avec ce jeu de variables, et ainsi associé
-certaines parties d'un nom de dossier/fichier à un nom de variable. Inversement, les variables permettront aussi de 
-construire un chemin à partir de variables que l'on fournira au préalable. 
+#### Associating paths with information
 
-Dans le contexte de l'exemple ci-dessus, si l'on fournit à Path Partout un chemin comme 
-`P:\son_teaser\asset\am\sunset001\push\sunset001_high1.blend`, en lui indiquant qu'il s'agit d'un chemin associé au `Label`
-`pushed`, l'outil sera en mesure de comprendre qu'ici le `project_name` a pour valeur `son_teaser`, l'`asset_name`
-a pour valeur `sunset001` ou encore que le `step` a pour valeur `high1`.
+To enable the association between the folder structure and useful information, the configuration includes a system of variables that can be specified as follows: `{{my_variable}}`
 
-Inversement maintenant, si j'indique à Path Partout que mon `project_name` est `pfffirates_series`, mon `asset_type`
-est `ch`, mon `asset_name` est `mosquito001`, mon `step` est `modeling` et mon `working_file_extension` est `blend`. Si
-je lui demande maintenant le chemin associé à mon label `pushed`, j'obtiendrai : 
-`P:\pfffirates_series\asset\ch\mosquito001\push\mosquito001_modeling.blend`
+Variables are strings of characters and can contain letters, numbers, and the underscore character (`_`). They conceptually describe the name of folders and files. With these variables, Path Partout can attempt to match a given path with this set of variables and associate certain parts of a folder/file name with a variable name. Conversely, variables can also be used to construct a path from variables provided in advance.
 
-A noter que l'outil Path Partout est sensible à la casse.
+In the context of the example above, if we provide Path Partout with a path like `P:\son_teaser\asset\am\sunset001\push\sunset001_high1.blend` and indicate that it is a path associated with the `pushed` `Label`, the tool will be able to understand that here the `project_name` has the value `son_teaser`, the `asset_name` has the value `sunset001`, and the `step` has the value `high1`.
 
-#### Noms de variables avancés
-Pour des noms dossiers ou fichiers plus complexes, il est possible de fixer le nombre de caractères contenu dans une 
-variable avec : `{{my_variable:x}}`. `x` sera un nombre indiquant le nombre de caractères de la variable.
+Conversely, if I tell Path Partout that my `project_name` is `pfffirates_series`, my `asset_type` is `ch`, my `asset_name` is `mosquito001`, my `step` is `modeling`, and my `working_file_extension` is `blend`. If I now ask for the path associated with my `pushed` `Label`, I will get: `P:\pfffirates_series\asset\ch\mosquito001\push\mosquito001_modeling.blend`
 
-Il est aussi possible de rendre la présence d'une variable facultative avec : `{{my_variable?}}`. Si la variable n'est
-pas fourni ou n'est pas présente dans le chemin fourni, cela n’empêchera pas la correspondance entre chemin et informations.
+Note that Path Partout is case-sensitive.
 
-On peut à la fois rendre une variable facultative et limitée en taille, comme ceux-ci : `{{my_variable?:x}}`
+#### Advanced variable names
+
+For more complex folder or file names, it is possible to set the number of characters contained in a variable using: `{{my_variable:x}}`. `x` is a number indicating the number of characters in the variable.
+
+It is also possible to make the presence of a variable optional using: `{{my_variable?}}`. If the variable is not provided or is not present in the given path, it will not prevent the matching between path and information.
+
+Both making a variable optional and limiting its size are possible, like this: `{{my_variable?:x}}`
 
 
-### Emplacement du fichier `path_partout.conf`
-Path Partout est un outil construit pour pouvoir fonctionner avec différentes structures de dossiers. En effet, en 
-fonction des studios de production, ou simplement des projets, l'organisation des dossiers n'est pas nécessairement
-la même.
+### Location of the `path_partout.conf` file
 
-Les fichiers de configuration peuvent donc être multiples en fonction des contextes. Pour identifier à quel fichier
-`path_partout.conf` l'outil doit se référer, lorsqu'on lui fourni un chemin, Path Partout va simplement chercher le fichier
-à l'emplacement du chemin fourni, puis dans ses différents dossiers parents. Il considérera le premier fichier de 
-configuration ainsi trouvé.
+Path Partout is a tool designed to work with different folder structures. Indeed, depending on production studios or simply projects, the folder organization may not be the same.
 
-Par exemple, si je demande les informations présentes dans le chemin `P:\son_teaser\asset\am\sunset001\push\sunset001_high1.blend`,
-Path Partout cherchera d'abord dans le dossier `P:\son_teaser\asset\am\sunset001\push\` un fichier `path_partout.conf`.
-S'il ne le trouve pas, il le cherchera dans `P:\son_teaser\asset\am\sunset001\` et ainsi de suite jusqu'au dossier `P:\`.
+Configuration files can therefore be multiple depending on the contexts. To identify which `path_partout.conf` file the tool should refer to when given a path, Path Partout will simply look for the file at the location of the given path and then in its parent folders. It will consider the first configuration file found in this way.
 
-Si aucun fichier de configuration n'est trouvé, une erreur est retournée.
+For example, if I request information from the path `P:\son_teaser\asset\am\sunset001\push\sunset001_high1.blend`, Path Partout will first look for a `path_partout.conf` file in the `P:\son_teaser\asset\am\sunset001\push\` folder. If it doesn't find it, it will look in `P:\son_teaser\asset\am\sunset001\` and so on until the `P:\` folder.
 
-Un **seul fichier** de configuration est toujours considéré lors de ce processus. Même si plusieurs fichiers de 
-configuration sont présents dans les dossiers parents, seul celui dans le dossier le plus éloigné de la racine du volume disque sera considéré.
+If no configuration file is found, an error is returned.
 
-### Configurer des dossiers de configuration
-Une autre possibilité permettant de rassembler ses fichiers de configuration au même endroit, est de définir des dossiers de configuration.
+Only **one configuration file** is always considered during this process. Even if multiple configuration files are present in the parent folders, only the one in the folder furthest from the root of the disk volume will be considered.
 
-Pour cela, il suffit de renseigner les dossiers voulus dans la variable d'environnement `PATH_PARTOUT_CONF_FOLDERS`.
-Exemple : `PATH_PARTOUT_CONF_FOLDERS = "C:/my/path/1/;C:/my/path/2/`. Il est également possible de renseigner ces chemins via l'API de Path Partout avec `pathpartout.config_folders.set_paths()`.
+### Configuring configuration folders
 
-Path Partout cherchera l'ensemble des fichiers ayant l'extension `.conf` présents dans les dossiers définis comme dossiers de configuration, ainsi que dans leurs sous-dossiers.
+Another possibility for gathering configuration files in the same place is to define configuration folders.
 
-Pour que Path Partout puisse identifier à quel fichier de configuration se référer lorsque vous lui indiquez un chemin,
-vous devez, dans les fichiers de configuration, définir un champ `scopes` dans lequel vous lister les dossiers dans lesquels le fichier de configuration sera actif. Path Partout considèrera toujours le fichier ayant le scope le plus restreint par rapport au chemin à traiter.
+To do this, simply specify the desired folders in the `PATH_PARTOUT_CONF_FOLDERS` environment variable. Example: `PATH_PARTOUT_CONF_FOLDERS = "C:/my/path/1/;C:/my/path/2/`. It is also possible to specify these paths via the Path Partout API using `pathpartout.config_folders.set_paths()`.
 
-Par exemple, si j'ai un fichier de configuration avec un scope `P:/` et un autre avec `P:/son`, et que je cherche des 
-informations à partir du fichier `P:/son/asset/my_file.ext`, alors c'est le second fichier de configuration avec le scopele plus précis `P:/son` qui sera considéré.
+Path Partout will search for all files with the `.conf` extension present in the folders defined as configuration folders, as well as in their subfolders.
 
-Noter que même si des dossiers de configuration sont renseignés, les fichiers présents dans l'arborescence de dossier 
-seront quand même traités s'il existent. En cas de scope identique, c'est le fichier présent dans l'arborescence et non 
-celui dans les dossiers de configuration qui sera pris en compte.
+For Path Partout to be able to identify which configuration file to refer to when you provide it with a path, you must define a `scopes` field in the configuration files, listing the folders in which the configuration file will be active. Path Partout will always consider the file with the most specific scope compared to the path being processed.
 
-### Recherche de fichier dans les dossiers de configuration
+For example, if I have a configuration file with a scope of `P:/` and another with `P:/son`, and I'm looking for information from the file `P:/son/asset/my_file.ext`, then the second configuration file with the more specific scope `P:/son` will be considered.
 
-L'usage de dossiers de configuration vous permet d'effectuer des recherches dans les fichiers de configuration de 
-vos dossiers. 
-Vous pouvez donner un nom à vos fichiers de configuration avec le champ `name`, et ensuite chercher le chemin d'une 
-configuration via l'API avec `pathpartout.config_folders.get_config_path_by_name()`
+Note that even if configuration folders are specified, files present in the folder hierarchy will still be processed if they exist. In case of identical scopes, the file present in the hierarchy, not the one in the configuration folders, will be taken into account.
 
-Vous pouvez également définir des termes de recherches dans vos configurations, comme ceci : 
+### Searching for files in configuration folders
+
+The use of configuration folders allows you to search for files in the configuration files of your folders. 
+You can give a name to your configuration files using the `name` field, and then search for the path of a configuration using the API with `pathpartout.config_folders.get_config_path_by_name()`.
+
+You can also define search terms in your configurations, like this:
 
 ```yaml
 search_term:
@@ -140,20 +107,17 @@ search_term:
     - "son_teaser"
     - "WLC"
 ```
-Vous pouvez ensuite retrouver le chemin de ce fichier de configuration via l'API en faisant : 
+
+You can then retrieve the path of this configuration file using the API by doing:
 `pathpartout.config_folders.search_config_path("projects", "son_teaser")`
 
 
-### Liaison de deux fichiers `path_partout.conf` (utilisation avancée)
-Il arrive que l'on souhaite considérer de façon unifiée, la structure de dossiers présente sur plusieurs volumes disques 
-en même temps.
-Dans ce cas, pour permettre de retrouver les fichiers de configuration à partir d'un chemin, il est important d'avoir 
-un fichier de configuration positionnés dans chaque volume disques.
-Il est toutefois possible de lier ces différents fichiers de configuration en ajoutant dans chaque fichier la liste des 
-chemins vers les autres fichiers `path_partout.conf` associés dans le champs `linked` à la racine des documents YAML.
+### Linking two `path_partout.conf` files (advanced usage)
 
-Si je veux par exemple liés les fichiers de configurations présents aux emplacements `P:/path_partout.conf` et 
-`I:/path_partout.conf`, j'aurai dans le premier :
+Sometimes, you may want to consider the folder structure present on multiple disk volumes in a unified way. In this case, to be able to find the configuration files from a path, it is important to have a configuration file in each disk volume. However, it is possible to link these different configuration files by adding in each file a list of paths to the other associated `path_partout.conf` files in the `linked` field at the root of the YAML documents.
+
+If, for example, I want to link the configuration files located at `P:/path_partout.conf` and `I:/path_partout.conf`, I would have in the first file:
+
 ```yaml
 "p:":
   "{{project_name}}":
@@ -161,7 +125,9 @@ Si je veux par exemple liés les fichiers de configurations présents aux emplac
 linked:
    - "i:/path_partout.conf"
 ```
-Dans le second : 
+
+And in the second file:
+
 ```yaml
 "i:":
   "{{asset_name}}":
@@ -170,23 +136,21 @@ linked:
    - "p:/path_partout.conf"
 ```
 
-Lorsque l'un des fichiers de configuration sera utilisé, les fichiers dépendants seront automatiquement inclues. Il est 
-important que les fichiers soient toujours mutuellement associés, pour évité tout conflit. De la même façon, les fichiers
-associés ne doivent jamais avoir de labels avec des noms identiques.
+When one of the configuration files is used, the dependent files will be automatically included. It is important that the files are always mutually associated to avoid any conflicts. Similarly, the associated files must never have labels with identical names.
 
 
-### Configuration de racines de chemin par plateforme
+### Configuring path roots per platform
 
-Dans le cas d'une production menée sur plusieurs plateforme (eg. Linux, Windows, etc.), les racines des chemins peuvent varier à la machine selon les points de montages et l'os.
+In the case of a production carried out on multiple platforms (e.g., Linux, Windows, etc.), the path roots may vary on each machine depending on mount points and the operating system.
 
-Pathpartout permet de configurer différentes racines via la variable d'environement `PATH_PARTOUT_ROOTS`. Cette variable doit faire apparaitre les labels des racines et leur valeur comme il suit: `Label1=Chemin1&Label2=Chemin2`.
+Pathpartout allows you to configure different roots via the `PATH_PARTOUT_ROOTS` environment variable. This variable should include the labels of the roots and their values as follows: `Label1=Path1&Label2=Path2`.
 
-Sur windows on aurait par exemple: `PATH_PARTOUT_ROOTS: fabrication=D:&rendu=G:`
+For example, on Windows: `PATH_PARTOUT_ROOTS: fabrication=D:&rendu=G:`
 
-Sur linux : `PATH_PARTOUT_ROOTS: fabrication=/mnt/d&rendu=/mnt/g`
+On Linux: `PATH_PARTOUT_ROOTS: fabrication=/mnt/d&rendu=/mnt/g`
 
-Une fois définie, il est possible de spécifier les racines pour les `scopes` et `trees` du fichier de configuration en suivant la synthaxe suivante: `{{root:Label1}}`.
-Cela donne par exemple:
+Once defined, it is possible to specify the roots for the `scopes` and `trees` of the configuration file using the following syntax: `{{root:Label1}}`.
+For example:
 
 ```yaml
 scopes:
@@ -203,96 +167,105 @@ trees:
           ...
   "{{root:rendu}}":
           ...
-
 ```
 
-Les racines serons interprétées au moment de la lecture de la configuration.
+The roots will be interpreted when reading the configuration.
 
 
-### Performances
 
-Pour les cas d'applications où de nombreux appels Pathpartout sont fait, les temps de lectures de la configuration pathpartout peuvent s'avérer problématique. Pour améliorer les performances il est possible d'activer la mise en cache de la configuration en définissant la variable d'environement `PATHPARTOUT_ENABLE_CONF_CACHE` à `true` (toute autre valeur désactivera le cache). **Ce cache sera supprimé au redémarrage de l'application, un changement de configuration nécessitera donc un redémarrage de l'application pour être pris en compte**. 
+## Performance
 
+For applications where many Pathpartout calls are made, reading times for the pathpartout configuration can be problematic. To improve performance, it is possible to enable configuration caching by setting the `PATHPARTOUT_ENABLE_CONF_CACHE` environment variable to `true` (any other value will disable the cache). **This cache will be cleared upon application restart, so a configuration change will require an application restart to take effect**.
 
-## Présentation de cas d'usages
-Une fois le ou les fichiers de configuration rédigés et positionnés dans la ou les structures de dossiers, il est 
-relativement simple de l'exploiter via Path Partout. 
+## Use cases overview
 
+Once the configuration file(s) are written and placed in the folder structure(s), it is relatively simple to use them via Path Partout.
 
-### Récupérer un objet TreePath
-Dans l'ensemble des cas d'usages, il s'agit d'abord de récupérer un objet de type `TreePath` permettant d'interagir
-avec une structure de dossiers en fonction d'un fichier de configuration particulier.
+### Retrieving a TreePath object
 
-Pour obtenir un objet `TreePath`, il existe plusieurs façons:
+In all use cases, the first step is to retrieve a `TreePath` object that allows interaction with a folder structure based on a specific configuration file.
+
+To obtain a `TreePath` object, there are several ways:
+
 ```python
-# Récupère un TreePath lié au fichier de configuration donnée, mais sans informations.
+# Retrieves a TreePath linked to the given configuration file, but without any information.
 tree_path = pathpartout.tree.get_from_config("P:/path_partout.conf")
-# Retrouve le fichier de configuration associé au dossier/fichier donné, mais sans informations.
-tree_path = pathpartout.tree.get_from_path("P:/path/fichier.ext")
-# Retrouve le fichier de configuration associé au dossier/fichier donné, et récupère les informations présentes dans le chemin donné.
-tree_path = pathpartout.tree.get_from_label("my_label", "P:/path/fichier.ext")
+# Finds the configuration file associated with the given folder/file, but without any information.
+tree_path = pathpartout.tree.get_from_path("P:/path/file.ext")
+# Finds the configuration file associated with the given folder/file and retrieves the information present in the given path.
+tree_path = pathpartout.tree.get_from_label("my_label", "P:/path/file.ext")
 ```
 
-### Exploiter les données présentes dans le TreePath
-Chaque TreePath fournit différentes informations liés au fichier de configuration associé.
+### Working with the data in the TreePath
+
+Each TreePath provides different information related to the associated configuration file.
+
 ```python
-# Fournit une liste de toutes les variables présentes dans l'ensemble de la configuration.
+# Provides a list of all variables present in the entire configuration.
 tree_path.available_info # ["project_name", "asset_name", "episode_number"]
-# Fournit une liste de tous les labels présents dans l'ensemble de la configuration.
+# Provides a list of all labels present in the entire configuration.
 tree_path.available_label # ["asset_push_folder", "pushed"]
-# Fournit un dictionnaire de toutes les variables dans la configuration et de leur valeur associés (None par défaut)
+# Provides a dictionary of all variables in the configuration and their associated values (default is None)
 tree_path.info # {"project_name": "son_teaser", "asset_name": "sunset001", "episode_number": None}
-# Retourne le chemin vers le fichier de configuration actuellement considéré.
+# Returns the path to the currently considered configuration file.
 tree_path.config_filepath # "P:/path_partout.conf"
 ```
 
-### Ajouter des informations au sein d'un TreePath
-Une fois un TreePath récupéré, ou même partiellement rempli par le biais d'un chemin et d'un label (`get_from_label`), 
-il est possible d'attribuer, ou de modifier la valeur des variables présentes dans la configuration:
+### Adding information to a TreePath
+
+Once a TreePath is retrieved, or even partially filled through a path and a label (`get_from_label`), it is possible to assign or modify the value of variables present in the configuration:
+
 ```python
-# Ajoute/Modifie la valeur de la variable project_name et asset_name
+# Add/Modify the value of the project_name and asset_name variables
 tree_path.info["project_name"] = "pfffirates_serie"
 tree_path.info["asset_name"] = "mosquito001"
 
-# Effectue la même action
+# Perform the same action
 tree_path.populate_info({"project_name": "pfffirates_serie", "asset_name": "mosquito001"})
 ```
 
-Vous pouvez également ajouter des informations à un TreePath existant à l'aide d'un label ou d'un agrégat:
+You can also add information to an existing TreePath using a label or an aggregate:
+
 ```python
 filepath = 'P:\Pfffirates_Serie\projet\episode\e0143_surgonflette\shot\s005\p016\clean\wip\e0143_s005_p016_clean_v001.blend'
-# Extrait les informations du chemin du label.
+# Extracts the information from the path using the label.
 tree_path.fill_with_label("shot_working_file", filepath)
-# Extrait les informations présentes dans l'agrégat défini dans la configuration. 
+# Extracts the information present in the aggregate defined in the configuration.
 tree_path.fill_with_aggregate("episode_full_name", "e0143_surgonflette")
 ```
 
-### Récupérer le chemin associé à un label
-Si un Treepath contient les informations suffisantes, on peut demander le chemin d'un label présent dans la configuration:
+### Retrieving the path associated with a label
+
+If a Treepath contains sufficient information, you can request the path of a label present in the configuration:
+
 ```python
-# Retourne le chemin associé au label pushed
+# Returns the path associated with the label "pushed"
 path = tree_path.get_label_path("pushed")
 ```
-Si les informations pour créer le chemin ne sont pas suffisantes, une erreur sera levée, spécifiant les informations
-manquantes.
 
-### Récupérer la valeur d'un agrégat
-Dans votre fichier de configuration vous pouvez définir des agrégats dont la valeur est généralement un composé de 
-plusieurs informations de la configuration.
+If the information to create the path is not sufficient, an error will be raised, specifying the missing information.
 
-Exemple : 
+### Retrieving the value of an aggregate
+
+In your configuration file, you can define aggregates whose value is generally a combination of several pieces of information from the configuration.
+
+Example:
+
 ```yaml
 aggregates: 
   "episode_full_name": "s{{season_number:2}}e{{episode_number:3}}_{{episode_name}}"
 ```
 
-Depuis un TreePath disposant déjà des informations nécessaires, vous pouvez récupérer la valeur d'un agrégat: 
+From a TreePath that already has the necessary information, you can retrieve the value of an aggregate:
+
 ```python
 tree_path.get_aggregate("episode_full_name") # output: "s01e043_surgonflette"
 ```
 
-## Exemple d'utilisation Cube spécifique
-### Récupérer les informations présentes dans le chemin d'un fichier de travail d'un shot
+## Example of specific Cube usage
+
+### Retrieving information from the path of a shot's working file
+
 ```python
 filepath = 'P:\Pfffirates_Serie\projet\episode\e0143_surgonflette\shot\s005\p016\clean\wip\e0143_s005_p016_clean_v001.blend'
 tree_path = pathpartout.tree_path.get_from_label("shot_working_file", filepath)
@@ -301,8 +274,8 @@ print(tree_path.info)
 Output : {'episode_name': 'surgonflette', 'task': 'clean', 'variant': 'clean', 'version_number': '001', 'asset_type_name': None, 'asset_name': None, 'season_number': '01', 'episode_number': '43', 'sequence_number': '005', 'asset_description': None, 'asset_type': None, 'extension': 'blend', 'project_name': 'Pfffirates_Serie', 'letter': 'P', 'shot_number': '016'}
 ```
 
+### Retrieving the render .mov path of a shot from the working file path of a shot
 
-### Récupérer le chemin du rendu .mov d'un shot à partir du chemin du fichier de travail d'un shot
 ```python
 filepath = 'P:\Pfffirates_Serie\projet\episode\e0143_surgonflette\shot\s005\p016\clean\wip\e0143_s005_p016_clean_v001.blend'
 tree_path = pathpartout.tree_path.get_from_label("shot_working_file", filepath)
@@ -312,7 +285,8 @@ if "episode_mov" in tree_path.available_labels:
 Output: 'I:/Pfffirates_Serie/projet/episode/e0143_surgonflette/shot/s005/p016/clean/v001/all/e0143_s005_p016_clean.mov'
 ```
 
-### Récupérer le chemin de travail d'un shot à partir de ses informations sur le projet Pfffirates
+### Retrieving the working file path of a shot from its information on the Pfffirates project
+
 ```python
 info = {'episode_name': 'surgonflette', 'task': 'clean', 'variant': 'clean', 'version_number': '001', 'season_number': '01', 'episode_number': '43', 'sequence_number': '005', 'extension': 'blend', 'project_name': 'Pfffirates_Serie', 'letter': 'P', 'shot_number': '016'}
 config_path = pathpartout.config_folders.search_config_path("projects", "Pfffirates_serie")
@@ -323,7 +297,8 @@ print(tree_path.get_label_path("shot_working_file"))
 Output: 'P:\Pfffirates_Serie\projet\episode\e0143_surgonflette\shot\s005\p016\clean\wip\e0143_s005_p016_clean_v001.blend'
 ```
 
-### Créer le fichier de travail d'un shot de la version suivante
+### Creating the working file of a shot for the next version
+
 ```python
 filepath = 'P:\Pfffirates_Serie\projet\episode\e0143_surgonflette\shot\s005\p016\clean\wip\e0143_s005_p016_clean_v001.blend'
 tree_path = pathpartout.tree_path.get_from_label("shot_working_file", filepath)
@@ -333,30 +308,31 @@ print(tree_path.get_label_path("shot_working_file"))
 Output: 'P:\Pfffirates_Serie\projet\episode\e0143_surgonflette\shot\s005\p016\clean\wip\e0143_s005_p016_clean_v002.blend'
 ```
 
-### Récupérer des informations d'un working file, sans savoir si c'est un shot ou un asset
-Il n'y a pas les mêmes chemins et donc les mêmes labels pour traiter le chemin d'un fichier de travail pour un shot et 
-pour un asset : `shot_working_file` et `asset_working_file`.
+### Retrieving information from a working file, without knowing if it's a shot or an asset
 
-On peut tester si le chemin match le label : 
+The paths and labels to process a working file path for a shot and an asset are different: `shot_working_file` and `asset_working_file`.
+
+You can test if the path matches the label:
+
 ```python
 is_shot = pathpartout.tree.is_label_matching_path("shot_working_file", my_path)
 print(is_shot) # true if shot path, false if asset path
 ```
 
-Ou on peut directement demander de matcher indifféremment le chemin avec l'un des deux labels.
+Or you can directly ask to match the path with either of the two labels.
+
 ```python
 tree = pathpartout.tree.get_from_labels(["shot_working_file", "asset_working_file"], my_path)
 ```
 
 ## Auto arbo
-Path Partout est également capable de générer la base de l'arborescence de dossiers d'un projet, c'est à dire les 
-dossiers principaux qui ne sont pas liés à des épisodes ou assets spécifiques.
 
-Pour utiliser cette fonctionnalité, il faut définir dans le fichier `path_partout.conf` concerné la liste des variables
-qu'il est nécessaire de connaitre pour initialiser l'arborescence de base. Cette liste doit être dans un champ `auto_arbo`
-à la racine de la configuration.
+Path Partout is also capable of generating the base folder structure of a project, i.e., the main folders that are not specific to episodes or assets.
 
-Voici un exemple : 
+To use this feature, you need to define in the relevant `path_partout.conf` file the list of variables that are necessary to initialize the base structure. This list should be in an `auto_arbo` field at the root of the configuration.
+
+Here is an example:
+
 ```yaml
 "p:":
   "{{project_name}}":
@@ -371,10 +347,10 @@ auto_arbo:
   - "project_name"
 ```
 
-Ici nous indiquons que nous désirons une valeur pour la variable `project_name` afin d'initialiser l'arborescence.
+Here we indicate that we want a value for the `project_name` variable to initialize the structure.
 
-Une fois cet élément défini, il nous suffit d’appeler la fonction `auto_arbo.get_info_needed` en spécifiant le chemin 
-du fichier de configuration `path_partout.conf` qui nous intéresse (ou d'un emplacement concerné par cette configuration).
+Once this element is defined, you simply need to call the `auto_arbo.get_info_needed` function, specifying the path of the `path_partout.conf` file of interest (or a location covered by this configuration).
+
 ```python
 from pathpartout import auto_arbo
 
@@ -382,11 +358,11 @@ path = "P:/path_partout.conf"
 required_info = auto_arbo.get_required_info(path)
 # required_info => { "project_name": None }
 ```
-La fonction retourne un dictionnaire dont les champs sont les infos qu'il est nécessaire de renseigner. La valeur de 
-chaque champ vaut `None` pour le moment.
 
-Il nous suffit ensuite de remplir le dictionnaire avec les valeurs que nous souhaitons. Nous pouvons ensuite appeler la 
-fonction `auto_arbo.generate` en rappelant le chemin de configuration et en donnant le dictionnaires d'infos complété : 
+The function returns a dictionary whose fields are the information that needs to be provided. The value of each field is currently `None`.
+
+You can then fill in the dictionary with the values you want. You can then call the `auto_arbo.generate` function, passing the configuration path and the completed info dictionary:
+
 ```python
 from pathpartout import auto_arbo
 
@@ -395,6 +371,5 @@ required_info = auto_arbo.get_required_info(path)
 required_info["project_name"] = "my-new-project-name"
 auto_arbo.generate(path, required_info)
 ```
-La fonction `auto_arbo.generate` va s'occuper de générer l'ensemble des dossiers d'une nouvelle architecture. Path Partout 
-créera autant de dossiers qu'il est possible de le faire avec les informations que vous lui aurez données : si il tombe
-sur un nom de sous-dossier constitué d'une variable qu'il ne connait pas, il ne créera pas ce dossier ni ses sous-dossiers.
+
+The `auto_arbo.generate` function will generate all the folders of a new architecture. Path Partout will create as many folders as possible with the information you have provided: if it encounters a subfolder name consisting of a variable it does not know, it will not create that folder or its subfolders.
