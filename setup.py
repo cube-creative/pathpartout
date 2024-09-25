@@ -4,7 +4,6 @@ from setuptools import setup, find_packages
 
 
 NAME = 'pathpartout'
-VERSION = '__VERSION__'
 DESCRIPTION = 'Path Parser'
 AUTHOR = 'Cube Creative'
 AUTHOR_EMAIL = 'development@cube-creative.com'
@@ -31,7 +30,7 @@ else:
 
 setup(
     name=NAME,
-    version=VERSION,
+    version="2.0.1",
     description=DESCRIPTION,
     long_description=_long_description,
     license='GPLv3',
