@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pathpartout"
+description = "Path Parser"
+readme = "README.md"
+dynamic = ["version"]
+authors = [
+    {name = "Cube Creative", email = "development@cube-creative.com"},
+]
+license = {file = "LICENSE.txt"}
+dependencies = [
+    "PyYAML>=5,<7",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "pathpartout.__version__"}
